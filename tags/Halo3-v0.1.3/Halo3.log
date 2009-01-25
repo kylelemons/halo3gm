@@ -1,0 +1,598 @@
+<?xml version="1.0" encoding="MacRoman" standalone="no"?>
+<!DOCTYPE log SYSTEM "logger.dtd">
+<log>
+<record>
+  <date>2009-01-25T15:12:54</date>
+  <millis>1232914374200</millis>
+  <sequence>0</sequence>
+  <logger>net.kylelemons.halo3</logger>
+  <level>INFO</level>
+  <class>net.kylelemons.halo3.HaloGameMaster</class>
+  <method>&lt;init&gt;</method>
+  <thread>10</thread>
+  <message>HaloGameMaster-v0.1.3 Starting...</message>
+</record>
+<record>
+  <date>2009-01-25T15:12:55</date>
+  <millis>1232914375138</millis>
+  <sequence>1</sequence>
+  <logger>net.kylelemons.halo3</logger>
+  <level>FINE</level>
+  <class>net.kylelemons.halo3.HaloGameMaster</class>
+  <method>&lt;init&gt;</method>
+  <thread>10</thread>
+  <message>Creating Generator Setup</message>
+</record>
+<record>
+  <date>2009-01-25T15:12:58</date>
+  <millis>1232914378992</millis>
+  <sequence>2</sequence>
+  <logger>net.kylelemons.halo3</logger>
+  <level>FINE</level>
+  <class>net.kylelemons.halo3.HaloGameMaster</class>
+  <method>&lt;init&gt;</method>
+  <thread>10</thread>
+  <message>Creating Game Generator</message>
+</record>
+<record>
+  <date>2009-01-25T15:12:59</date>
+  <millis>1232914379436</millis>
+  <sequence>3</sequence>
+  <logger>net.kylelemons.halo3</logger>
+  <level>FINE</level>
+  <class>net.kylelemons.halo3.HaloGameMaster</class>
+  <method>&lt;init&gt;</method>
+  <thread>10</thread>
+  <message>Creating User Interface</message>
+</record>
+<record>
+  <date>2009-01-25T15:13:08</date>
+  <millis>1232914388200</millis>
+  <sequence>4</sequence>
+  <logger>net.kylelemons.halo3</logger>
+  <level>FINE</level>
+  <class>net.kylelemons.halo3.HaloGameMaster</class>
+  <method>&lt;init&gt;</method>
+  <thread>10</thread>
+  <message>Creating Default Configuration</message>
+</record>
+<record>
+  <date>2009-01-25T15:13:08</date>
+  <millis>1232914388505</millis>
+  <sequence>5</sequence>
+  <logger>net.kylelemons.halo3</logger>
+  <level>FINE</level>
+  <class>net.kylelemons.halo3.HaloGameMaster</class>
+  <method>&lt;init&gt;</method>
+  <thread>10</thread>
+  <message>Running UI Setup</message>
+</record>
+<record>
+  <date>2009-01-25T15:13:08</date>
+  <millis>1232914388873</millis>
+  <sequence>6</sequence>
+  <logger>net.kylelemons.halo3</logger>
+  <level>INFO</level>
+  <class>net.kylelemons.halo3.UserInterface</class>
+  <method>loadDatabase</method>
+  <thread>10</thread>
+  <message>Loading 24 players...</message>
+</record>
+<record>
+  <date>2009-01-25T15:13:08</date>
+  <millis>1232914388876</millis>
+  <sequence>7</sequence>
+  <logger>net.kylelemons.halo3</logger>
+  <level>INFO</level>
+  <class>net.kylelemons.halo3.UserInterface</class>
+  <method>loadDatabase</method>
+  <thread>10</thread>
+  <message>Loading 16 maps...</message>
+</record>
+<record>
+  <date>2009-01-25T15:13:08</date>
+  <millis>1232914388878</millis>
+  <sequence>8</sequence>
+  <logger>net.kylelemons.halo3</logger>
+  <level>INFO</level>
+  <class>net.kylelemons.halo3.UserInterface</class>
+  <method>loadDatabase</method>
+  <thread>10</thread>
+  <message>Loading 8 games...</message>
+</record>
+<record>
+  <date>2009-01-25T15:13:08</date>
+  <millis>1232914388880</millis>
+  <sequence>9</sequence>
+  <logger>net.kylelemons.halo3</logger>
+  <level>INFO</level>
+  <class>net.kylelemons.halo3.UserInterface</class>
+  <method>loadDatabase</method>
+  <thread>10</thread>
+  <message>Loading Game Setup</message>
+</record>
+<record>
+  <date>2009-01-25T15:13:08</date>
+  <millis>1232914388880</millis>
+  <sequence>10</sequence>
+  <logger>net.kylelemons.halo3</logger>
+  <level>INFO</level>
+  <class>net.kylelemons.halo3.UserInterface</class>
+  <method>loadDatabase</method>
+  <thread>10</thread>
+  <message>Database loaded successfully</message>
+</record>
+<record>
+  <date>2009-01-25T15:13:19</date>
+  <millis>1232914399183</millis>
+  <sequence>11</sequence>
+  <logger>net.kylelemons.halo3</logger>
+  <level>FINE</level>
+  <class>net.kylelemons.halo3.UserInterface</class>
+  <method>propertyChange</method>
+  <thread>10</thread>
+  <message>Property Change: ProgressBar[ancestor] from null to javax.swing.JPanel[,0,0,0x0,invalid,layout=javax.swing.SpringLayout,alignmentX=0.0,alignmentY=0.0,border=javax.swing.border.LineBorder@385660,flags=9,maximumSize=,minimumSize=,preferredSize=]</message>
+</record>
+<record>
+  <date>2009-01-25T15:13:19</date>
+  <millis>1232914399707</millis>
+  <sequence>12</sequence>
+  <logger>net.kylelemons.halo3</logger>
+  <level>INFO</level>
+  <class>net.kylelemons.halo3.HaloGameMaster</class>
+  <method>&lt;init&gt;</method>
+  <thread>10</thread>
+  <message>Setup Complete</message>
+</record>
+<record>
+  <date>2009-01-25T15:13:19</date>
+  <millis>1232914399708</millis>
+  <sequence>13</sequence>
+  <logger>net.kylelemons.halo3</logger>
+  <level>INFO</level>
+  <class>net.kylelemons.halo3.HaloGameMaster</class>
+  <method>start</method>
+  <thread>10</thread>
+  <message>Starting HaloGameMaster</message>
+</record>
+<record>
+  <date>2009-01-25T15:13:19</date>
+  <millis>1232914399710</millis>
+  <sequence>14</sequence>
+  <logger>net.kylelemons.halo3</logger>
+  <level>INFO</level>
+  <class>net.kylelemons.halo3.GameGenerator</class>
+  <method>regenerate</method>
+  <thread>10</thread>
+  <message>Generating game...</message>
+</record>
+<record>
+  <date>2009-01-25T15:13:19</date>
+  <millis>1232914399779</millis>
+  <sequence>15</sequence>
+  <logger>net.kylelemons.halo3</logger>
+  <level>FINE</level>
+  <class>net.kylelemons.halo3.GameGenerator</class>
+  <method>regenerate</method>
+  <thread>10</thread>
+  <message>With 14 players, we'll have at most 4 players per team</message>
+</record>
+<record>
+  <date>2009-01-25T15:13:19</date>
+  <millis>1232914399779</millis>
+  <sequence>16</sequence>
+  <logger>net.kylelemons.halo3</logger>
+  <level>INFO</level>
+  <class>net.kylelemons.halo3.HaloGameMaster</class>
+  <method>gameChanged</method>
+  <thread>10</thread>
+  <message>Updating game UI</message>
+</record>
+<record>
+  <date>2009-01-25T15:13:20</date>
+  <millis>1232914400491</millis>
+  <sequence>17</sequence>
+  <logger>net.kylelemons.halo3</logger>
+  <level>INFO</level>
+  <class>net.kylelemons.halo3.UserInterface</class>
+  <method>setGame</method>
+  <thread>10</thread>
+  <message>Game successfully set</message>
+</record>
+<record>
+  <date>2009-01-25T15:13:20</date>
+  <millis>1232914400492</millis>
+  <sequence>18</sequence>
+  <logger>net.kylelemons.halo3</logger>
+  <level>INFO</level>
+  <class>net.kylelemons.halo3.UserInterface$1</class>
+  <method>construct</method>
+  <thread>11</thread>
+  <message>Worker Starting</message>
+</record>
+<record>
+  <date>2009-01-25T15:13:20</date>
+  <millis>1232914400493</millis>
+  <sequence>19</sequence>
+  <logger>net.kylelemons.halo3</logger>
+  <level>FINE</level>
+  <class>net.kylelemons.halo3.UserInterface</class>
+  <method>propertyChange</method>
+  <thread>11</thread>
+  <message>Property Change: ProgressBar[max] from null to 450</message>
+</record>
+<record>
+  <date>2009-01-25T15:13:20</date>
+  <millis>1232914400493</millis>
+  <sequence>20</sequence>
+  <logger>net.kylelemons.halo3</logger>
+  <level>FINE</level>
+  <class>net.kylelemons.halo3.UserInterface</class>
+  <method>propertyChange</method>
+  <thread>11</thread>
+  <message>Property Change: ProgressBar[val] from null to 0</message>
+</record>
+<record>
+  <date>2009-01-25T15:13:20</date>
+  <millis>1232914400493</millis>
+  <sequence>21</sequence>
+  <logger>net.kylelemons.halo3</logger>
+  <level>FINE</level>
+  <class>net.kylelemons.halo3.UserInterface</class>
+  <method>propertyChange</method>
+  <thread>11</thread>
+  <message>Property Change: ProgressBar[string] from Game Time! to Remaining: 7:30</message>
+</record>
+<record>
+  <date>2009-01-25T15:13:20</date>
+  <millis>1232914400493</millis>
+  <sequence>22</sequence>
+  <logger>net.kylelemons.halo3</logger>
+  <level>FINE</level>
+  <class>net.kylelemons.halo3.UserInterface</class>
+  <method>propertyChange</method>
+  <thread>11</thread>
+  <message>Property Change: ProgressBar[str] from null to Remaining: 7:30</message>
+</record>
+<record>
+  <date>2009-01-25T15:13:21</date>
+  <millis>1232914401495</millis>
+  <sequence>23</sequence>
+  <logger>net.kylelemons.halo3</logger>
+  <level>FINE</level>
+  <class>net.kylelemons.halo3.UserInterface</class>
+  <method>propertyChange</method>
+  <thread>11</thread>
+  <message>Property Change: ProgressBar[val] from 0 to 1</message>
+</record>
+<record>
+  <date>2009-01-25T15:13:21</date>
+  <millis>1232914401495</millis>
+  <sequence>24</sequence>
+  <logger>net.kylelemons.halo3</logger>
+  <level>FINE</level>
+  <class>net.kylelemons.halo3.UserInterface</class>
+  <method>propertyChange</method>
+  <thread>11</thread>
+  <message>Property Change: ProgressBar[string] from Remaining: 7:30 to Remaining: 7:29</message>
+</record>
+<record>
+  <date>2009-01-25T15:13:21</date>
+  <millis>1232914401495</millis>
+  <sequence>25</sequence>
+  <logger>net.kylelemons.halo3</logger>
+  <level>FINE</level>
+  <class>net.kylelemons.halo3.UserInterface</class>
+  <method>propertyChange</method>
+  <thread>11</thread>
+  <message>Property Change: ProgressBar[str] from Remaining: 7:30 to Remaining: 7:29</message>
+</record>
+<record>
+  <date>2009-01-25T15:13:22</date>
+  <millis>1232914402496</millis>
+  <sequence>26</sequence>
+  <logger>net.kylelemons.halo3</logger>
+  <level>FINE</level>
+  <class>net.kylelemons.halo3.UserInterface</class>
+  <method>propertyChange</method>
+  <thread>11</thread>
+  <message>Property Change: ProgressBar[val] from 1 to 2</message>
+</record>
+<record>
+  <date>2009-01-25T15:13:22</date>
+  <millis>1232914402496</millis>
+  <sequence>27</sequence>
+  <logger>net.kylelemons.halo3</logger>
+  <level>FINE</level>
+  <class>net.kylelemons.halo3.UserInterface</class>
+  <method>propertyChange</method>
+  <thread>11</thread>
+  <message>Property Change: ProgressBar[string] from Remaining: 7:29 to Remaining: 7:28</message>
+</record>
+<record>
+  <date>2009-01-25T15:13:22</date>
+  <millis>1232914402497</millis>
+  <sequence>28</sequence>
+  <logger>net.kylelemons.halo3</logger>
+  <level>FINE</level>
+  <class>net.kylelemons.halo3.UserInterface</class>
+  <method>propertyChange</method>
+  <thread>11</thread>
+  <message>Property Change: ProgressBar[str] from Remaining: 7:29 to Remaining: 7:28</message>
+</record>
+<record>
+  <date>2009-01-25T15:13:23</date>
+  <millis>1232914403499</millis>
+  <sequence>29</sequence>
+  <logger>net.kylelemons.halo3</logger>
+  <level>FINE</level>
+  <class>net.kylelemons.halo3.UserInterface</class>
+  <method>propertyChange</method>
+  <thread>11</thread>
+  <message>Property Change: ProgressBar[val] from 2 to 3</message>
+</record>
+<record>
+  <date>2009-01-25T15:13:23</date>
+  <millis>1232914403499</millis>
+  <sequence>30</sequence>
+  <logger>net.kylelemons.halo3</logger>
+  <level>FINE</level>
+  <class>net.kylelemons.halo3.UserInterface</class>
+  <method>propertyChange</method>
+  <thread>11</thread>
+  <message>Property Change: ProgressBar[string] from Remaining: 7:28 to Remaining: 7:27</message>
+</record>
+<record>
+  <date>2009-01-25T15:13:23</date>
+  <millis>1232914403499</millis>
+  <sequence>31</sequence>
+  <logger>net.kylelemons.halo3</logger>
+  <level>FINE</level>
+  <class>net.kylelemons.halo3.UserInterface</class>
+  <method>propertyChange</method>
+  <thread>11</thread>
+  <message>Property Change: ProgressBar[str] from Remaining: 7:28 to Remaining: 7:27</message>
+</record>
+<record>
+  <date>2009-01-25T15:13:24</date>
+  <millis>1232914404500</millis>
+  <sequence>32</sequence>
+  <logger>net.kylelemons.halo3</logger>
+  <level>FINE</level>
+  <class>net.kylelemons.halo3.UserInterface</class>
+  <method>propertyChange</method>
+  <thread>11</thread>
+  <message>Property Change: ProgressBar[val] from 3 to 4</message>
+</record>
+<record>
+  <date>2009-01-25T15:13:24</date>
+  <millis>1232914404500</millis>
+  <sequence>33</sequence>
+  <logger>net.kylelemons.halo3</logger>
+  <level>FINE</level>
+  <class>net.kylelemons.halo3.UserInterface</class>
+  <method>propertyChange</method>
+  <thread>11</thread>
+  <message>Property Change: ProgressBar[string] from Remaining: 7:27 to Remaining: 7:26</message>
+</record>
+<record>
+  <date>2009-01-25T15:13:24</date>
+  <millis>1232914404500</millis>
+  <sequence>34</sequence>
+  <logger>net.kylelemons.halo3</logger>
+  <level>FINE</level>
+  <class>net.kylelemons.halo3.UserInterface</class>
+  <method>propertyChange</method>
+  <thread>11</thread>
+  <message>Property Change: ProgressBar[str] from Remaining: 7:27 to Remaining: 7:26</message>
+</record>
+<record>
+  <date>2009-01-25T15:13:25</date>
+  <millis>1232914405502</millis>
+  <sequence>35</sequence>
+  <logger>net.kylelemons.halo3</logger>
+  <level>FINE</level>
+  <class>net.kylelemons.halo3.UserInterface</class>
+  <method>propertyChange</method>
+  <thread>11</thread>
+  <message>Property Change: ProgressBar[val] from 4 to 5</message>
+</record>
+<record>
+  <date>2009-01-25T15:13:25</date>
+  <millis>1232914405504</millis>
+  <sequence>36</sequence>
+  <logger>net.kylelemons.halo3</logger>
+  <level>FINE</level>
+  <class>net.kylelemons.halo3.UserInterface</class>
+  <method>propertyChange</method>
+  <thread>11</thread>
+  <message>Property Change: ProgressBar[string] from Remaining: 7:26 to Remaining: 7:25</message>
+</record>
+<record>
+  <date>2009-01-25T15:13:25</date>
+  <millis>1232914405504</millis>
+  <sequence>37</sequence>
+  <logger>net.kylelemons.halo3</logger>
+  <level>FINE</level>
+  <class>net.kylelemons.halo3.UserInterface</class>
+  <method>propertyChange</method>
+  <thread>11</thread>
+  <message>Property Change: ProgressBar[str] from Remaining: 7:26 to Remaining: 7:25</message>
+</record>
+<record>
+  <date>2009-01-25T15:13:26</date>
+  <millis>1232914406505</millis>
+  <sequence>38</sequence>
+  <logger>net.kylelemons.halo3</logger>
+  <level>FINE</level>
+  <class>net.kylelemons.halo3.UserInterface</class>
+  <method>propertyChange</method>
+  <thread>11</thread>
+  <message>Property Change: ProgressBar[val] from 5 to 6</message>
+</record>
+<record>
+  <date>2009-01-25T15:13:26</date>
+  <millis>1232914406505</millis>
+  <sequence>39</sequence>
+  <logger>net.kylelemons.halo3</logger>
+  <level>FINE</level>
+  <class>net.kylelemons.halo3.UserInterface</class>
+  <method>propertyChange</method>
+  <thread>11</thread>
+  <message>Property Change: ProgressBar[string] from Remaining: 7:25 to Remaining: 7:24</message>
+</record>
+<record>
+  <date>2009-01-25T15:13:26</date>
+  <millis>1232914406506</millis>
+  <sequence>40</sequence>
+  <logger>net.kylelemons.halo3</logger>
+  <level>FINE</level>
+  <class>net.kylelemons.halo3.UserInterface</class>
+  <method>propertyChange</method>
+  <thread>11</thread>
+  <message>Property Change: ProgressBar[str] from Remaining: 7:25 to Remaining: 7:24</message>
+</record>
+<record>
+  <date>2009-01-25T15:13:27</date>
+  <millis>1232914407507</millis>
+  <sequence>41</sequence>
+  <logger>net.kylelemons.halo3</logger>
+  <level>FINE</level>
+  <class>net.kylelemons.halo3.UserInterface</class>
+  <method>propertyChange</method>
+  <thread>11</thread>
+  <message>Property Change: ProgressBar[val] from 6 to 7</message>
+</record>
+<record>
+  <date>2009-01-25T15:13:27</date>
+  <millis>1232914407507</millis>
+  <sequence>42</sequence>
+  <logger>net.kylelemons.halo3</logger>
+  <level>FINE</level>
+  <class>net.kylelemons.halo3.UserInterface</class>
+  <method>propertyChange</method>
+  <thread>11</thread>
+  <message>Property Change: ProgressBar[string] from Remaining: 7:24 to Remaining: 7:23</message>
+</record>
+<record>
+  <date>2009-01-25T15:13:27</date>
+  <millis>1232914407507</millis>
+  <sequence>43</sequence>
+  <logger>net.kylelemons.halo3</logger>
+  <level>FINE</level>
+  <class>net.kylelemons.halo3.UserInterface</class>
+  <method>propertyChange</method>
+  <thread>11</thread>
+  <message>Property Change: ProgressBar[str] from Remaining: 7:24 to Remaining: 7:23</message>
+</record>
+<record>
+  <date>2009-01-25T15:13:28</date>
+  <millis>1232914408509</millis>
+  <sequence>44</sequence>
+  <logger>net.kylelemons.halo3</logger>
+  <level>FINE</level>
+  <class>net.kylelemons.halo3.UserInterface</class>
+  <method>propertyChange</method>
+  <thread>11</thread>
+  <message>Property Change: ProgressBar[val] from 7 to 8</message>
+</record>
+<record>
+  <date>2009-01-25T15:13:28</date>
+  <millis>1232914408509</millis>
+  <sequence>45</sequence>
+  <logger>net.kylelemons.halo3</logger>
+  <level>FINE</level>
+  <class>net.kylelemons.halo3.UserInterface</class>
+  <method>propertyChange</method>
+  <thread>11</thread>
+  <message>Property Change: ProgressBar[string] from Remaining: 7:23 to Remaining: 7:22</message>
+</record>
+<record>
+  <date>2009-01-25T15:13:28</date>
+  <millis>1232914408520</millis>
+  <sequence>46</sequence>
+  <logger>net.kylelemons.halo3</logger>
+  <level>FINE</level>
+  <class>net.kylelemons.halo3.UserInterface</class>
+  <method>propertyChange</method>
+  <thread>11</thread>
+  <message>Property Change: ProgressBar[str] from Remaining: 7:23 to Remaining: 7:22</message>
+</record>
+<record>
+  <date>2009-01-25T15:13:29</date>
+  <millis>1232914409521</millis>
+  <sequence>47</sequence>
+  <logger>net.kylelemons.halo3</logger>
+  <level>FINE</level>
+  <class>net.kylelemons.halo3.UserInterface</class>
+  <method>propertyChange</method>
+  <thread>11</thread>
+  <message>Property Change: ProgressBar[val] from 8 to 9</message>
+</record>
+<record>
+  <date>2009-01-25T15:13:29</date>
+  <millis>1232914409522</millis>
+  <sequence>48</sequence>
+  <logger>net.kylelemons.halo3</logger>
+  <level>FINE</level>
+  <class>net.kylelemons.halo3.UserInterface</class>
+  <method>propertyChange</method>
+  <thread>11</thread>
+  <message>Property Change: ProgressBar[string] from Remaining: 7:22 to Remaining: 7:21</message>
+</record>
+<record>
+  <date>2009-01-25T15:13:29</date>
+  <millis>1232914409522</millis>
+  <sequence>49</sequence>
+  <logger>net.kylelemons.halo3</logger>
+  <level>FINE</level>
+  <class>net.kylelemons.halo3.UserInterface</class>
+  <method>propertyChange</method>
+  <thread>11</thread>
+  <message>Property Change: ProgressBar[str] from Remaining: 7:22 to Remaining: 7:21</message>
+</record>
+<record>
+  <date>2009-01-25T15:13:30</date>
+  <millis>1232914410524</millis>
+  <sequence>50</sequence>
+  <logger>net.kylelemons.halo3</logger>
+  <level>FINE</level>
+  <class>net.kylelemons.halo3.UserInterface</class>
+  <method>propertyChange</method>
+  <thread>11</thread>
+  <message>Property Change: ProgressBar[val] from 9 to 10</message>
+</record>
+<record>
+  <date>2009-01-25T15:13:30</date>
+  <millis>1232914410524</millis>
+  <sequence>51</sequence>
+  <logger>net.kylelemons.halo3</logger>
+  <level>FINE</level>
+  <class>net.kylelemons.halo3.UserInterface</class>
+  <method>propertyChange</method>
+  <thread>11</thread>
+  <message>Property Change: ProgressBar[string] from Remaining: 7:21 to Remaining: 7:20</message>
+</record>
+<record>
+  <date>2009-01-25T15:13:30</date>
+  <millis>1232914410524</millis>
+  <sequence>52</sequence>
+  <logger>net.kylelemons.halo3</logger>
+  <level>FINE</level>
+  <class>net.kylelemons.halo3.UserInterface</class>
+  <method>propertyChange</method>
+  <thread>11</thread>
+  <message>Property Change: ProgressBar[str] from Remaining: 7:21 to Remaining: 7:20</message>
+</record>
+<record>
+  <date>2009-01-25T15:13:31</date>
+  <millis>1232914411321</millis>
+  <sequence>53</sequence>
+  <logger>net.kylelemons.halo3</logger>
+  <level>FINEST</level>
+  <class>net.kylelemons.halo3.UserInterface</class>
+  <method>keyPressed</method>
+  <thread>12</thread>
+  <message>Pressed: ?(157)</message>
+</record>
+</log>
