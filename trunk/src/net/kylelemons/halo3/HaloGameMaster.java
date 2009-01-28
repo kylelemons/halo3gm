@@ -22,6 +22,8 @@ public class HaloGameMaster implements GameGenerator.GameChangedListener, UserIn
   public static final String APPLICATION = "HaloGameMaster";
   public static final String VERSION = "v0.1.4";
   private long m_regen_start_time;
+  private SimpleWebInterface m_webserver;
+  private Thread m_webthread;
 
   private static Logger logger = Logger.getLogger("net.kylelemons.halo3");
   
@@ -33,6 +35,7 @@ public class HaloGameMaster implements GameGenerator.GameChangedListener, UserIn
    */
   public static void main(String[] args) throws InterruptedException, SecurityException, IOException
   {
+    
     HaloGameMaster master = new HaloGameMaster();
     master.start();
   }
@@ -115,6 +118,9 @@ public class HaloGameMaster implements GameGenerator.GameChangedListener, UserIn
     
     m_setup.addSetupChangeListener(this);
     
+    logger.info("Setting up web server");
+    m_webserver = new SimpleWebInterface();
+    
     logger.info("Setup Complete");
   }
   
@@ -124,12 +130,17 @@ public class HaloGameMaster implements GameGenerator.GameChangedListener, UserIn
     m_gen.addGameChangedListener(this);
     m_ui.addKeyListener(this);
     m_gen.generate();
+    
+    logger.info("Starting webserver");
+    m_webthread = new Thread(m_webserver);
+    m_webthread.start();
   }
 
   public void gameChanged(GameGenerator gen)
   {
     logger.info("Updating game UI");
     m_ui.setGame(gen.getTeams(), gen.getGame(), gen.getMap());
+    m_webserver.setGame(gen.getTeams(), gen.getGame(), gen.getMap());
     m_ui.setWarningBorder(gen.getGood());
   }
 

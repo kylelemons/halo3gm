@@ -130,7 +130,19 @@ When set to zero, these sliders allow the game generator to distribute players a
 \subsection{Database}
 The database can be saved from this section.  Whether or not the database was loaded successfully on generator startup is also displayed here.  The database should be saved frequently, as the generator will not automatically save updates.  The default name of the database (and the name that is used at startup) is listed in the text box, but can be changed to save a backup or alternate database.  The load database button is for recovery purposes only, see the Authentication section above for more details.
 
+\chapter{Other Features}
+\subsection{Built-in Mobile Web Server}
+As of v0.1.5, there is a \textbf{very} simple webserver built in that simply responds to every request by sending an HTML page with the current game on it.  This is ideally suited for iPhones, iPod Touches, and any other mobile device with a roughly 480px wide screen.  To access it, simply go to the following URL (replacing \verb+<IP>+ with the IP address or hostname of the machine running the game generator):
+
+\begin{verbatim}
+http://<IP>:1880/
+\end{verbatim}
+
 \chapter{Change Log}
+\section{New in v0.1.5}
+\begin{itemize}
+\item Built-in mobile web viewer (port 1880)
+\end{itemize}
 \section{New in v0.1.4}
 \begin{itemize}
 \item Changed the game generation algorithm to improve fairness
