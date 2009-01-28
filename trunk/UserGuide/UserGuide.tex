@@ -1,7 +1,7 @@
 \documentclass[10pt,a4paper]{report}
 \author{Kyle Lemons}
 \title{Halo3 Game Master User's Guide \\
-{\large{Current Version: Halo3-v0.1.3}}}
+{\large{Current Version: Halo3-v0.1.4}}}
 \begin{document}
 \maketitle
 \tableofcontents
@@ -55,7 +55,7 @@ F3 & & Switch to the Game/Map Editor \\
 F4 & & Switch to the Setup Editor \\
 \end{tabular}
 
-\section{Settings Editor}
+\section{Setup Editor}
 \begin{tabular}{c|c|l}
 Fn Key & Hot Key & Command \\
 \hline
@@ -63,5 +63,104 @@ F1 & & Switch back to the Main Screen \\
 F3 & & Switch to the Game/Map Editor \\
 F4 & & Switch to the Setup Editor \\
 \end{tabular}
+
+\chapter{Interface}
+\section{Game Screen}
+\subsection{Team Grid}
+The team grid is the focal point of the interface.  Each row corresponds to a team chosen by the generator.  The first column is the team name.  This either indicates the color of the team, the team number, or a configurable team name (see the Setup Editor Interface section), which could correspond to where the team is situated, etc.
+
+Each of the subsequent columns contains the name of a player assigned to the team on whose row the name appears.  Players are assigned first to the teams at the top of the list, up to the maximum number of players allowable for an evenly distributed match.  For instance, with fourteen players and four teams, the only fair distribution is a maximum of four players per team.  Unless team capacities have been configured (see the Setup Editor Interface section), the two empty slots will always be allocated to the lowest team in the grid.
+
+It is possible to configure the game such that all unallocated spaces are assigned to a team whose players are not actually involved in the game, and as such not included in the fairness calculations.  The primary purpose of this is to facilitate game generation with more than sixteen players without affecting the fairness calculations.  This can be configured, along with the rest of the team generation options, in the Setup Editor.
+
+Almost all changes to the configuration screens will cause a regeneration of the teams listed here.
+
+\subsection{Game Timer}
+The game timer reflects the amount of time left before the next game is intended to start.  The time displayed here is based on the game delay set in the Setup configuration.
+
+\subsection{Game Type, Map, and Image}
+At the bottom of the screen, the generated game/map combination is displayed in white letters above an image which corresponds to the chosen map.
+
+\subsection{Screen Border}
+The border of the screen will typically remain black, but in the rare case where the players cannot be allocated correctly (two many team capacities have been set, leaving no room for some players), the border will turn red.
+
+\section{Authentication Screen}
+The authentication screen will appear when a user attempts to switch from the main game screen to a configuration screen.  It will not appear if no users are properly configured as Major Players, or if no such players have a passcode properly set.  This screen is empty with the exception of a passcode entry field.  Any major player can enter their code here, and as the last character is typed, the screen will change to the intended configuration screen.
+
+Should the authentication screen become unpassable, whether it be by all of the major players leaving or through a mis-entered passcode in the Player Editor, it is possible to get into the configuration screen by moving the database file and loading the generator.  This will load the default players and configurations, which includes no major players and no passcodes.  On the Setup Editor screen, the Load Database button will remain disabled until the F12 key is pressed, at which point the name of the original database can be entered and loaded.  Please note that this is \textbf{only} for recovery purposes, and only the Player Editor will be updated to reflect the loaded entries, though the maps, game types, and setup configurations are all loaded.  At this point, the user can fix the passcodes and save the database.  When the generator is relaunched, it should again be possible to use the correct passcodes to display the configuration screens.
+
+\section{Player Editor}
+\subsection{Player List}
+This list displays a scrolling list of all players saved in the database.  When one has been recently selected, the arrow keys and space bar can be used to scroll through the list and toggle the playing status of the currently selected player (respectively).  The space bar shortcut will \textbf{not} work when another element in the player setup screen has been focused.
+
+\subsection{Player Configuration}
+The player name and gamer tag identify the player.  As of this release, the gamer tag is not displayed or used, but the player name is displayed in the main screen team grid.
+
+The player skill level represents how proficient the player is at Halo.  This should be scaled such that the best player has a score of 10, and is the equivalent of two players who have a skill of 5.
+
+The passcode, if the player is selected as a major player, will allow the player to enter the configuration screens.
+
+If the gamer is playing (the checkbox is selected), the player will be considered by the generator for placement into a team.
+
+The "New Player" button will create a new player with the default values for all settings.  The "Duplicate Player" button will duplicate the player that is currently selected (bracketing their name to indicate the duplicate in the menu), with the exception of their passcode and major player status.
+
+The "Delete Player" button will (when the checkbox next to it is selected) remove the selected player from the database.  If the checkbox is not selected, it will become selected such that another click of the "Delete Player" button will cause the player entry to be deleted.
+
+\chapter{Game and Map Editor}
+Coming Soon
+
+\chapter{Setup Editor}
+\subsection{Team Generation}
+The slider in this section controls how many teams will be generated.
+
+\subsection{Player Allocation}
+The fairness slider controls how hard the game works to make the teams fair.  At zero, the generated game will be completely random.  At one, it will generate two games and pick the more fair of the two.  At fifty, it will generate fifty-one combinations of players and discard fifty of them in favor of the one whose teams are fairest.
+
+The fairness of the game is determined by adding up the skills of all players on each team, and finding the difference between the team with the highest total skill and the team with the lowest total skill.  The fairest game is the one in which this difference is smallest.
+
+\subsection{Time Between Games}
+When a game is generated, the counter begins counting down from this number, and at zero the progress bar will display the text "Game Time!"  This setting\footnote{This setting is one of the few that behave this way.  Most will cause the game to be generated fresh.} can be changed without causing the game to be regenerated; the counter will simply recalculate how much time is left based on when the game was originally generated.
+
+\subsection{Team Names}
+These eight fields contain the names of the teams as they will display on the main game screen.  The top row, from left to right, is for the first four teams, the second row for the last four.  Any teams not generated may have a name, but the name and team will not be shown on the main player table.
+
+\subsection{Team Capacities}
+When set to zero, these sliders allow the game generator to distribute players as evenly among the teams as it can.  If a team should not have more than a certain number (it bears mentioning that a single xbox can only have four players connected to it at once), the appropriate slider can be set to restrict the number of players the generator will assign there.  Note that it will only fine-tune the number of players using these sliders, it will not take them into account when determining the global number of players per team.  Switch these all to zero and then fine-tune again if your settings here cause the main screen to have a red borer.
+
+\subsection{Database}
+The database can be saved from this section.  Whether or not the database was loaded successfully on generator startup is also displayed here.  The database should be saved frequently, as the generator will not automatically save updates.  The default name of the database (and the name that is used at startup) is listed in the text box, but can be changed to save a backup or alternate database.  The load database button is for recovery purposes only, see the Authentication section above for more details.
+
+\chapter{Change Log}
+\section{New in v0.1.4}
+\begin{itemize}
+\item Changed the game generation algorithm to improve fairness
+\item Removed placement priority
+\item Added "Ignore Last Team" functionality
+\item Added authentication screen
+\item Changed Look and Feel on Mac OS to the cross-platform L\&F to improve usability and unify the interface
+\end{itemize}
+\section{New in v0.1.3}
+\begin{itemize}
+\item Support for adding and deleting players added
+\item Fixed additional bugs and interface concerns about player editor
+\item Fixed creation and update of games and maps
+\item Logging support added
+\item Player, game, map, and setup save and load supported
+\item Game time slider and progress bar added
+\item Fixed loading of map images after save and load on different computer
+\item Changed background of team names in main screen
+\end{itemize}
+\section{New in v0.1.2}
+\begin{itemize}
+\item Interface changes, simplifications, hot keys, and a unified user table
+\item Images working in JAR mode
+\item Player editor bugs fixed
+\end{itemize}
+\section{New in v0.1.1}
+\begin{itemize}
+\item First working release
+\item Full-screen support
+\item Images work in application mode
+\end{itemize}
 
 \end{document}

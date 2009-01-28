@@ -20,7 +20,7 @@ public class HaloGameMaster implements GameGenerator.GameChangedListener, UserIn
   
   // TODO Logging
   public static final String APPLICATION = "HaloGameMaster";
-  public static final String VERSION = "v0.1.3";
+  public static final String VERSION = "v0.1.4";
   private long m_regen_start_time;
 
   private static Logger logger = Logger.getLogger("net.kylelemons.halo3");

@@ -54,6 +54,7 @@ import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.Spring;
 import javax.swing.SpringLayout;
+import javax.swing.UIManager;
 import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.ChangeEvent;
@@ -67,6 +68,7 @@ import javax.swing.text.BadLocationException;
 public class UserInterface implements KeyListener, ChangeListener, ActionListener, DocumentListener, ListSelectionListener, ItemListener, PropertyChangeListener
 {
   private static final int FRAME_MIN_SIZE = 300;
+  
   public static final String DEFAULT_DATABASE = "Halo3.dat";
   
   private static Logger logger = Logger.getLogger("net.kylelemons.halo3");
@@ -81,7 +83,6 @@ public class UserInterface implements KeyListener, ChangeListener, ActionListene
   private PlayerList.Player m_active_player;
   private JTextField m_active_playername;
   private JTextField m_active_gamertag;
-  private JSlider m_active_priority;
   private JSlider m_active_skill;
   private JCheckBox m_active_enabled;
   private JCheckBox m_vetopower;
@@ -102,7 +103,16 @@ public class UserInterface implements KeyListener, ChangeListener, ActionListene
   private long m_gamestarttime;
   private JTextField m_databasename;
   private JLabel m_databasestatus;
-  //private JComponent m_pendingscreen;
+  private JComponent m_pendingscreen;
+
+  private JButton m_loaddbbutton;
+
+  private JPanel m_authenticate;
+
+  private JPasswordField m_authpassfield;
+  
+  // TODO: Pending screen login
+  // TODO: Setup parameter for "ignore last team"
   
   public static interface KeyListener
   {
@@ -153,6 +163,8 @@ public class UserInterface implements KeyListener, ChangeListener, ActionListene
         for (int i = 0; i < playerCount; ++i)
         {
           PlayerList.Player next = (PlayerList.Player)input.readObject();
+          //next.passcode_hash = "";
+          //next.veto_power = false;
           m_playerlist.add(next);
         }
 
@@ -183,6 +195,7 @@ public class UserInterface implements KeyListener, ChangeListener, ActionListene
         m_setup.setFairness((Integer)input.readObject());
         m_setup.setGameDelay((Integer)input.readObject());
         m_setup.setTeamCount((Integer)input.readObject());
+        m_setup.setIgnoreLast((Boolean)input.readObject());
         for (int i = 0; i < GameSetup.MAX_ALLOWED_TEAMS; ++i)
         {
           m_setup.setTeamCap(i, (Integer)input.readObject());
@@ -260,6 +273,7 @@ public class UserInterface implements KeyListener, ChangeListener, ActionListene
         output.writeObject(m_setup.getFairness());
         output.writeObject(m_setup.getGameDelay());
         output.writeObject(m_setup.getTeamCount());
+        output.writeObject(m_setup.getIgnoreLastTeam());
         for (int i = 0; i < GameSetup.MAX_ALLOWED_TEAMS; ++i)
         {
           output.writeObject(m_setup.getTeamCap(i));
@@ -429,6 +443,11 @@ public class UserInterface implements KeyListener, ChangeListener, ActionListene
     m_fsframe.setResizable(false);
     m_fsframe.addKeyListener(this);
     m_fsframe.setName("Main Window");
+    try {
+      UIManager.setLookAndFeel(
+        UIManager.getCrossPlatformLookAndFeelClassName());
+    } catch (Exception e) {
+    }
   }
   
   private void makeFullScreen()
@@ -443,6 +462,9 @@ public class UserInterface implements KeyListener, ChangeListener, ActionListene
     m_fsframe.setVisible(true);
   }
   
+  /**
+   * 
+   */
   private void createContents()
   {
     // Use these!
@@ -603,20 +625,6 @@ public class UserInterface implements KeyListener, ChangeListener, ActionListene
       skillPanel.add(inputSkill);
     settingsGroup.add(skillPanel);
     
-    JPanel prioPanel = new JPanel();
-      prioPanel.setBorder(new TitledBorder("Gamer Room Placement Priority"));
-      JSlider inputPrio = new JSlider(JSlider.HORIZONTAL, 0, 100, 0);
-        inputPrio.setMajorTickSpacing(20);
-        inputPrio.setMinorTickSpacing(5);
-        inputPrio.setPaintTicks(true);
-        inputPrio.setPaintLabels(true);
-        inputPrio.setSnapToTicks(true);
-        inputPrio.setName("Player Priority");
-        inputPrio.addChangeListener(this);
-        inputPrio.addKeyListener(this);
-      prioPanel.add(inputPrio);
-    settingsGroup.add(prioPanel);
-    
     JPanel keyturnPanel = new JPanel();
       keyturnPanel.setBorder(new TitledBorder("Override Passcode and Major Player"));
       JPasswordField majorPasscode = new JPasswordField(12);
@@ -669,7 +677,6 @@ public class UserInterface implements KeyListener, ChangeListener, ActionListene
     /* Player Editor */
     m_active_gamertag = inputGamerTag;
     m_active_playername = inputPlayerName;
-    m_active_priority = inputPrio;
     m_active_skill = inputSkill;
     m_active_enabled = enableButton;
     m_playereditor = playerEditPane;
@@ -774,9 +781,9 @@ public class UserInterface implements KeyListener, ChangeListener, ActionListene
       fairnessPanel.setBorder(new TitledBorder("Player Allocation"));
       fairnessPanel.setLayout(new FlowLayout());
       fairnessPanel.add(new JLabel("How fair should the teams be?"));
-      JSlider fairness = new JSlider(JSlider.HORIZONTAL, -5, 10, m_setup.getFairness());
-        fairness.setMajorTickSpacing(5);
-        fairness.setMinorTickSpacing(1);
+      JSlider fairness = new JSlider(JSlider.HORIZONTAL, 0, 50, m_setup.getFairness());
+        fairness.setMajorTickSpacing(10);
+        fairness.setMinorTickSpacing(5);
         fairness.setPaintTicks(true);
         fairness.setPaintLabels(true);
         fairness.setSnapToTicks(true);
@@ -784,14 +791,20 @@ public class UserInterface implements KeyListener, ChangeListener, ActionListene
         fairness.addKeyListener(this);
         fairness.addChangeListener(this);
       fairnessPanel.add(fairness);
+      JCheckBox ignoreLast = new JCheckBox("Ignore last team");
+        ignoreLast.setName("Ignore Last");
+        ignoreLast.addItemListener(this);
+        ignoreLast.addKeyListener(this);
+        ignoreLast.setSelected(m_setup.getIgnoreLastTeam());
+      fairnessPanel.add(ignoreLast);
     setupPanel.add(fairnessPanel);
     
     JPanel delayPanel = new JPanel();
       delayPanel.setBorder(new TitledBorder("Time Between Games"));
       delayPanel.setLayout(new FlowLayout());
       delayPanel.add(new JLabel("How many minutes between games?"));
-      JSlider delaySlider = new JSlider(JSlider.HORIZONTAL, 60, 60*10, m_setup.getGameDelay());
-        delaySlider.setMajorTickSpacing(60);
+      JSlider delaySlider = new JSlider(JSlider.HORIZONTAL, 0, 60*32, m_setup.getGameDelay());
+        delaySlider.setMajorTickSpacing(5*60);
         delaySlider.setMinorTickSpacing(30);
         delaySlider.setPaintTicks(true);
         delaySlider.setPaintLabels(true);
@@ -799,11 +812,27 @@ public class UserInterface implements KeyListener, ChangeListener, ActionListene
         delaySlider.setName("Game Delay");
         delaySlider.addKeyListener(this);
         delaySlider.addChangeListener(this);
+        delaySlider.setPreferredSize(new Dimension(500, delaySlider.getPreferredSize().height));
         Hashtable<Integer,JComponent> labels = new Hashtable<Integer,JComponent>();
+        labels.put(60*0, new JLabel("0"));
         labels.put(60*1, new JLabel("1"));
+        labels.put(60*2, new JLabel("2"));
+        labels.put(60*3, new JLabel("3"));
         labels.put(60*4, new JLabel("4"));
+        labels.put(60*5, new JLabel("5"));
+        labels.put(60*6, new JLabel("6"));
         labels.put(60*7, new JLabel("7"));
+        labels.put(60*8, new JLabel("8"));
+        labels.put(60*9, new JLabel("9"));
         labels.put(60*10, new JLabel("10"));
+        labels.put(60*12, new JLabel("12"));
+        labels.put(60*14, new JLabel("14"));
+        labels.put(60*16, new JLabel("16"));
+        labels.put(60*18, new JLabel("18"));
+        labels.put(60*20, new JLabel("20"));
+        labels.put(60*24, new JLabel("24"));
+        labels.put(60*28, new JLabel("28"));
+        labels.put(60*32, new JLabel("32"));
         delaySlider.setLabelTable(labels);
       delayPanel.add(delaySlider);
     setupPanel.add(delayPanel);
@@ -812,7 +841,7 @@ public class UserInterface implements KeyListener, ChangeListener, ActionListene
       teamNamePanel.setBorder(new TitledBorder("Team Names"));
       teamNamePanel.setLayout(new BoxLayout(teamNamePanel, BoxLayout.PAGE_AXIS));
       JPanel subNamePanel1 = new JPanel();
-      JPanel subNamePanel2 = new JPanel();
+      subNamePanel1.add(new JLabel("1-4"));
       for (int i = 0; i < GameSetup.MAX_ALLOWED_TEAMS/2; ++i)
       {
         JTextField fld = new JTextField(12);
@@ -823,6 +852,8 @@ public class UserInterface implements KeyListener, ChangeListener, ActionListene
         fld.addKeyListener(this);
         subNamePanel1.add(fld);
       }
+      JPanel subNamePanel2 = new JPanel();
+      subNamePanel2.add(new JLabel("5-8"));
       for (int i = GameSetup.MAX_ALLOWED_TEAMS/2; i < GameSetup.MAX_ALLOWED_TEAMS; ++i)
       {
         JTextField fld = new JTextField(12);
@@ -841,11 +872,11 @@ public class UserInterface implements KeyListener, ChangeListener, ActionListene
       teamCapPanel.setBorder(new TitledBorder("Team Capacities (zero disables)"));
       teamCapPanel.setLayout(new BoxLayout(teamCapPanel, BoxLayout.PAGE_AXIS));
       JPanel subCapPanel1 = new JPanel();
-      JPanel subCapPanel2 = new JPanel();
+      subCapPanel1.add(new JLabel("1-4"));
       for (int i = 0; i < GameSetup.MAX_ALLOWED_TEAMS/2; ++i)
       {
         JSlider cap = new JSlider(JSlider.HORIZONTAL, 0, 8, m_setup.getTeamCap(i));
-        cap.setMajorTickSpacing(4);
+        cap.setMajorTickSpacing(2);
         cap.setMinorTickSpacing(1);
         cap.setPaintTicks(true);
         cap.setPaintLabels(true);
@@ -853,12 +884,15 @@ public class UserInterface implements KeyListener, ChangeListener, ActionListene
         cap.setName("Team Cap:"+i);
         cap.addKeyListener(this);
         cap.addChangeListener(this);
+        cap.setPreferredSize(new Dimension(120,cap.getPreferredSize().height));
         subCapPanel1.add(cap);
       }
+      JPanel subCapPanel2 = new JPanel();
+      subCapPanel2.add(new JLabel("5-8"));
       for (int i = GameSetup.MAX_ALLOWED_TEAMS/2; i < GameSetup.MAX_ALLOWED_TEAMS; ++i)
       {
         JSlider cap = new JSlider(JSlider.HORIZONTAL, 0, 8, m_setup.getTeamCap(i));
-        cap.setMajorTickSpacing(4);
+        cap.setMajorTickSpacing(2);
         cap.setMinorTickSpacing(1);
         cap.setPaintTicks(true);
         cap.setPaintLabels(true);
@@ -866,6 +900,7 @@ public class UserInterface implements KeyListener, ChangeListener, ActionListene
         cap.setName("Team Cap:"+i);
         cap.addKeyListener(this);
         cap.addChangeListener(this);
+        cap.setPreferredSize(new Dimension(120,cap.getPreferredSize().height));
         subCapPanel2.add(cap);
       }
       teamCapPanel.add(subCapPanel1);
@@ -889,6 +924,7 @@ public class UserInterface implements KeyListener, ChangeListener, ActionListene
         loadDatabase.addActionListener(this);
         loadDatabase.addKeyListener(this);
         loadDatabase.setEnabled(false); // TODO: This needs to completely refresh the UI, so it's disabled.
+        m_loaddbbutton = loadDatabase;
       databasePanel.add(loadDatabase);
       if (m_databasestatus == null)
         m_databasestatus = new JLabel("Database Status Unknown");
@@ -896,6 +932,27 @@ public class UserInterface implements KeyListener, ChangeListener, ActionListene
     setupPanel.add(databasePanel);
       
     m_setupeditor = setupPane;
+    
+    /* * * * * * * * * * * */
+    /* Authentication Pane */
+    /* * * * * * * * * * * */
+    JPanel authWrapper = new JPanel();
+    JPanel authPane = new JPanel();
+    authPane.setLayout(new BorderLayout());
+    
+    JPanel authPasscodePanel = new JPanel();
+    authPasscodePanel.setBorder(BorderFactory.createTitledBorder("Enter your passcode"));
+    JPasswordField enterPasscodeField = new JPasswordField(12);
+      enterPasscodeField.setName("Authenticate");
+      enterPasscodeField.getDocument().putProperty("Name", "Authenticate");
+      enterPasscodeField.getDocument().addDocumentListener(this);
+      enterPasscodeField.addKeyListener(this);
+      m_authpassfield = enterPasscodeField;
+    authPasscodePanel.add(enterPasscodeField);
+    
+    authPane.add(authPasscodePanel, BorderLayout.PAGE_START);
+    authWrapper.add(authPane);
+    m_authenticate = authWrapper;
   }
 
   /** Handle the key-pressed event from the text field. */
@@ -912,6 +969,28 @@ public class UserInterface implements KeyListener, ChangeListener, ActionListene
     }*/
     switch (e.getKeyCode())
     {
+      /* Undocumented feature: Press F12 to minimize from fullscreen, M to restore fullscreen */
+      case KeyEvent.VK_F12:
+        if (m_fsframe.getContentPane() == m_maincontent)
+        {
+          GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
+          gd.setFullScreenWindow(null);
+          //if (!m_fsframe.isDisplayable()) m_fsframe.setUndecorated(false);
+          m_fsframe.setState(JFrame.ICONIFIED);
+        }
+
+        /* Undocumented feature: Press F12 enable the load database button (backdoor into editing a database) */
+        if (m_fsframe.getContentPane() == m_setupeditor)
+        {
+          logger.severe("Backdoor database load enabled!");
+          m_loaddbbutton.setEnabled(true);
+        }
+        break;
+      case KeyEvent.VK_M:
+        if (m_fsframe.getContentPane() == m_maincontent)
+          makeFullScreen();
+        break;
+      
       case KeyEvent.VK_F1:
         logger.info("Return to Game Screen");
         m_fsframe.setFocusable(true);
@@ -925,10 +1004,7 @@ public class UserInterface implements KeyListener, ChangeListener, ActionListene
           break;
       case KeyEvent.VK_F2:
         logger.info("Launching Player Editor");
-        m_fsframe.setFocusable(true);
-        m_fsframe.transferFocus(); // Needed to still receive keyboard events
-        m_fsframe.setContentPane(m_playereditor);
-        m_fsframe.setVisible(true);
+        authFrameSwitch(m_playereditor, false);
         break;
       
       case KeyEvent.VK_G:
@@ -936,10 +1012,7 @@ public class UserInterface implements KeyListener, ChangeListener, ActionListene
           break;
       case KeyEvent.VK_F3:
         logger.info("Launching Game Editor");
-        m_fsframe.setFocusable(true);
-        m_fsframe.transferFocus(); // Needed to still receive keyboard events
-        m_fsframe.setContentPane(m_gameeditor);
-        m_fsframe.setVisible(true);
+        authFrameSwitch(m_gameeditor, false);
         break;
       
       case KeyEvent.VK_S:
@@ -947,10 +1020,7 @@ public class UserInterface implements KeyListener, ChangeListener, ActionListene
           break;
       case KeyEvent.VK_F4:
         logger.info("Launching Setup Editor");
-        m_fsframe.setFocusable(true);
-        m_fsframe.transferFocus(); // Needed to still receive keyboard events
-        m_fsframe.setContentPane(m_setupeditor);
-        m_fsframe.setVisible(true);
+        authFrameSwitch(m_setupeditor, false);
         break;
       
       case KeyEvent.VK_SPACE:
@@ -976,6 +1046,47 @@ public class UserInterface implements KeyListener, ChangeListener, ActionListene
         logger.finest("Pressed: " + KeyEvent.getKeyText(e.getKeyCode()) + "(" + e.getKeyCode() + ")");
     }
     fireKeyListener(e.getKeyCode(), e.getID());
+  }
+
+  /**
+   * @param dest
+   * @param skipAuth TODO
+   */
+  private void authFrameSwitch(JComponent dest, boolean skipAuth)
+  {
+    JComponent current = (JComponent) m_fsframe.getContentPane();
+    
+    boolean goToFrame = false;
+    if (!skipAuth && (current == m_maincontent || current == m_authenticate))
+    {
+      boolean activeMajors = false;
+      for (int i = 0; !goToFrame && i < m_playerlist.getSize(); ++i)
+      {
+        if (m_playerlist.getPlayers().get(i).veto_power && m_playerlist.getPlayers().get(i).passcode_hash.length() > 0)
+          activeMajors = true;
+      }
+      if (!activeMajors)
+        goToFrame = true;
+    }
+    else
+      goToFrame = true;
+    
+    if (!goToFrame)
+    {
+      m_pendingscreen = dest;
+      dest = m_authenticate;
+    }
+    else
+      m_pendingscreen = null;
+    m_fsframe.setFocusable(true);
+    m_fsframe.transferFocus(); // Needed to still receive keyboard events
+    m_fsframe.setContentPane(dest);
+    m_fsframe.setVisible(true);
+    if (!goToFrame)
+    {
+      m_authpassfield.setText("");
+      m_authpassfield.requestFocus();
+    }
   }
   
   /** Handle the key typed event from the text field. */
@@ -1011,8 +1122,6 @@ public class UserInterface implements KeyListener, ChangeListener, ActionListene
         PlayerList.Player active = m_active_player;
         if (src.getName().equals("Player Skill"))
           active.skill = newValue;
-        else if (src.getName().equals("Player Priority"))
-          active.priority = newValue;
         m_playerlist.updatePlayer(idx, active);
       }
     }
@@ -1127,7 +1236,6 @@ public class UserInterface implements KeyListener, ChangeListener, ActionListene
       def.gamertag = m_active_player.gamertag;
       def.name = "[ " + m_active_player.name + " ]";
       def.playing = m_active_player.playing;
-      def.priority = m_active_player.priority;
       def.skill = m_active_player.skill;
       m_active_player = null;
       m_playerlistview.setSelectedIndices(new int[0]);
@@ -1211,6 +1319,29 @@ public class UserInterface implements KeyListener, ChangeListener, ActionListene
         if (setting.equals("Team Name") && index >= 0 && index < GameSetup.MAX_ALLOWED_TEAMS)
           m_setup.setTeamName(index, newValue);
       }
+      else if (m_fsframe.getContentPane() == m_authenticate)
+      {
+        if (src == null)
+          return;
+        String setting = parseSettingName(src);
+        String newValue = e.getDocument().getText(0,e.getDocument().getLength());
+        logger.info("Document change: " + setting);
+        if (setting != "Authenticate")
+        {
+          logger.severe("Misdirected events!  Only Authentication methods should propagate here.");
+          return;
+        }
+        // TODO
+        for (int i = 0; i < m_playerlist.getSize(); ++i)
+        {
+          PlayerList.Player p = m_playerlist.getPlayers().get(i);
+          if (p.veto_power && p.passcode_hash.length() > 0)
+            if (p.checkPasscode(newValue))
+            {
+              authFrameSwitch(m_pendingscreen, true);
+            }
+        }
+      }
     }
     catch (BadLocationException e1)
     {
@@ -1261,7 +1392,6 @@ public class UserInterface implements KeyListener, ChangeListener, ActionListene
   {
     this.m_active_gamertag.setText(active.gamertag);
     this.m_active_playername.setText(active.name);
-    this.m_active_priority.setValue(active.priority);
     this.m_active_skill.setValue(active.skill);
     this.m_active_enabled.setSelected(active.playing);
     this.m_vetopower.setSelected(active.veto_power);
@@ -1311,6 +1441,20 @@ public class UserInterface implements KeyListener, ChangeListener, ActionListene
         m_maplist.updateMap(idx, updated);
       }
     }
+    else if (frame == m_setupeditor)
+    {
+      //int idx = parseSettingIndex(src.getName());
+      String name = parseSettingName(src.getName());
+      boolean newValue = e.getStateChange() == ItemEvent.SELECTED;
+      logger.info("    New State: " + (newValue?"Checked":"Not Checked"));
+      if (name.equals("Ignore Last"))
+      {
+        m_setup.setIgnoreLast(newValue);
+      }
+      else
+        logger.warning("Unknown setting: " + name);
+    }
+    
   }
 
   public void setGame(Team[] teams, GameList.GameType game, MapList.Map map)
@@ -1318,6 +1462,11 @@ public class UserInterface implements KeyListener, ChangeListener, ActionListene
     if (m_teamgrid == null)
       return;
     m_teamgrid.clear();
+    
+//    StackTraceElement[] caller = new Throwable().getStackTrace();
+//    logger.info("Called from: " + caller[1].getMethodName() + " in " + caller[1].getFileName() + ":" + caller[1].getLineNumber());
+//    logger.info("       from: " + caller[2].getMethodName() + " in " + caller[2].getFileName() + ":" + caller[2].getLineNumber());
+//    logger.info("       from: " + caller[3].getMethodName() + " in " + caller[3].getFileName() + ":" + caller[3].getLineNumber());
     
     for (int t = 0; t < teams.length; ++t)
     {
@@ -1351,7 +1500,11 @@ public class UserInterface implements KeyListener, ChangeListener, ActionListene
             else
             {
               if (m_gametime.getString() != "Game Time!")
+              {
+                m_gametime.putClientProperty("max", 100);
+                m_gametime.putClientProperty("val", 100);
                 m_gametime.putClientProperty("str", "Game Time!");
+              }
             }
             try
             {

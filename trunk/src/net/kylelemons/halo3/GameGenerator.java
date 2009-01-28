@@ -121,11 +121,14 @@ public class GameGenerator implements ListDataListener
     m_rand.setSeed(m_seed);
     
     // Wipe the team list clean
+    m_teams = null;
+    /*
     m_teams = new Team[m_setup.getTeamCount()];
     for (int t = 0; t < m_teams.length; ++t)
     {
       m_teams[t] = new Team("Team " + (t+1));
     }
+    */
     
     // Collect all of the players
     ArrayList<PlayerList.Player> players = new ArrayList<PlayerList.Player>();
@@ -136,79 +139,59 @@ public class GameGenerator implements ListDataListener
         players.add(p);
     }
     
+    /* * * * * * * * * * * * * * * * */
+    /* Start Player allocation code  */
+    /* * * * * * * * * * * * * * * * */
+    
     // Order list by: Priority, Skill, Random
-    Collections.shuffle(players, m_rand);
-    Collections.sort(players, new PlayerList.Player.SkillSorter());    // guaranteed to be stable, so it preserves
-    Collections.sort(players, new PlayerList.Player.PrioritySorter()); // prior order when equal
+    //Collections.shuffle(players, m_rand);
+    //Collections.sort(players, new PlayerList.Player.SkillSorter());    // guaranteed to be stable, so it preserves
+    //Collections.sort(players, new PlayerList.Player.PrioritySorter()); // prior order when equal
     
     int totalPlayers = players.size();
+    int realPlayers = (totalPlayers <= 16)?totalPlayers:16;
+    int maxPerTeam = (int)Math.ceil( (double)totalPlayers / m_setup.getTeamCount() );
+    int fairness = m_setup.getFairness();
     if (totalPlayers < 2)
     {
       logger.info("Cowardly refusing to create a game with fewer than two people playing");
       return;
     }
     
-    int realPlayers = (totalPlayers <= 16)?totalPlayers:16;
-    int maxPerTeam = (int)Math.ceil( (double)totalPlayers / m_setup.getTeamCount() );
     logger.fine("With " + players.size() + " players, we'll have at most " + maxPerTeam + " players per team");
     
-    int[] teamWeights = new int[m_teams.length];
-    int fairness = m_setup.getFairness();
-    
-    for (int p = 0; p < players.size(); ++p)
+    // Loop fairness times to find the fairest team allocation
+    int fairest_score = -1;
+    for (int i = 0; i <= fairness; ++i)
     {
-      // Assign each player to a team
-      /* Here's how weights work:
-       *   Each team that has available spaces starts out with a weight of 1
-       *   If the fairness is positive, teams get extra weight (equal to fairness) for each empty space
-       *   If the fairness is negative, teams get extra weight (equal to fairness) for each filled space
-       *   If the fairness is zero, teams get no extra weight
-       */
-      for (int t = 0; t < m_teams.length; ++t)
-      { 
-        // This facilitates the rand() < x comparisons
-        if (t > 0) teamWeights[t] = teamWeights[t-1];
-        else       teamWeights[t] = 0;
-        
-        int max = maxPerTeam;
-        if (m_setup.getTeamCap(t) > 0 && m_setup.getTeamCap(t) < maxPerTeam)
-          max = m_setup.getTeamCap(t);
-        
-        if (m_teams[t].size() < max)
-        {
-          // Each team has an automatic weight of 1 if it has available spaces
-          teamWeights[t] += 1;
-        
-          // Weights are increased by fairness as explained above
-          if (fairness > 0)
-            teamWeights[t] += fairness * (maxPerTeam - m_teams[t].size());
-          if (fairness < 0)
-            teamWeights[t] += -fairness * m_teams[t].size();
-        }
-      }
+      int fairness_score;
       
-      if (teamWeights[m_teams.length-1] > 0)
+      // Generate the teams
+      Collections.shuffle(players, m_rand);
+      
+      // Allocate a clean list of teams
+      Team[] potential = new Team[m_setup.getTeamCount()];
+      
+      // Assign people to teams
+      int cur = 0;
+      for (int t = 0; t < potential.length; ++t)
       {
-        // Choose a number within the bounds of these weights
-        int chosen = m_rand.nextInt(teamWeights[m_teams.length-1]);
-        
-        // Figure out what team that is
-        int team = m_teams.length; // crash if not found
-        for (int t = 0; t < m_teams.length; ++t)
-          if (chosen < teamWeights[t])
-          {
-            team = t;
-            break;
-          }
-        
-        m_teams[team].add(players.get(p));
-        m_good = true;
+        int cap = m_setup.getTeamCap(t);
+        if (cap == 0 || cap > maxPerTeam) cap = maxPerTeam;
+        potential[t] = new Team("Team " + (t+1));
+        for (int j = 0; j < cap && cur < players.size(); ++j)
+          potential[t].add(players.get(cur++));
       }
-      else
+      // This is good if the teams come out evenly.  Otherwise, the caps are messed up.
+      m_good = cur == players.size();
+      
+      fairness_score = getFairTeamScore(potential);
+      
+      if (m_teams == null || fairness_score < fairest_score)
       {
-        m_good = false;
-        logger.warning("Team caps are preventing full allocation of players!");
-        break;
+        m_teams = potential;
+        fairest_score = fairness_score;
+        logger.info("New fairest team: " + fairest_score);
       }
     }
     
@@ -267,6 +250,29 @@ public class GameGenerator implements ListDataListener
     fireGameChanged();
   }
   
+  private int getFairTeamScore(Team[] potential)
+  {
+    int max;
+    int min;
+    
+    if (potential.length <= 0) return -1;
+    
+    max = min = potential[0].totalSkill();
+    
+    for (int t = 1; t < potential.length; ++t)
+    {
+      if (t == potential.length-1 && m_setup.getIgnoreLastTeam())
+        continue;
+      int skill = potential[t].totalSkill();
+      if (skill > max)
+        max = skill;
+      if (skill < min)
+        min = skill;
+    }
+    
+    return max-min;
+  }
+
   public void generate()
   {
     m_seed = 0;
