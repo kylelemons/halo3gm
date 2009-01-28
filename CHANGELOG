@@ -3,8 +3,6 @@ HaloGameMaster-v0.1.2:
 2008-01-23  Kyle Lemons  <kyle.lemons@gatech.edu>
   * CHANGELOG: Created the change log.
 
-
-
 HaloGameMaster-v0.1.3:
 
 2008-01-23  Kyle Lemons  <kyle.lemons@gatech.edu>
@@ -43,3 +41,20 @@ HaloGameMaster-v0.1.3:
   
   * MapList.java: Changed icon to be a String instead of a URL (strings serialize better)
   * UserInterface.java: Made use of the string from Map.image instead of the URL
+
+HaloGameMaster-v0.1.4:
+
+2008-01-23  Kyle Lemons  <kyle.lemons@gatech.edu>
+  * HaloGameMaster: Bumped revision up to v0.1.4 after tagging and packaging up v0.1.3
+  
+  * GameGenerator.java: Changed the player selection algorithm
+  * GameSetup.java: Added a setup parameter for "ignore last team"
+  * UserInterface.java: Changed fairness to be [0..50]
+  * UserInterface.java: Added "Ignore last team" checkbox
+  * UserInterface.java: Added "Ignore last team" to save/load
+  
+  * TeamGrid.java: Added display of a team skill label (if the skill is >= 10) (subsequently removed)
+  
+  * UserInterface.java: Added authentication pane and proxy switching into the prefs from the main screen
+  * UserInterface.java: Added bypass key to minimize window (undocumented) and enable loading (also undoc'd)
+  * UserInterface.java: Added cross-platform look and feel by default (e.g. on Mac)

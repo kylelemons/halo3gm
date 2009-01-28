@@ -29,16 +29,14 @@ public class PlayerList extends AbstractListModel
     public boolean playing;
     public boolean veto_power;
     
+    private static final char[] hexChars ={'0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F'};
+    
     /** 0..10 */
     public int skill;
-    
-    /** 0..100 */
-    public int priority;
     
     public static final int SORT_BY_NAME = 1;
     public static final int SORT_BY_TAG = 2;
     public static final int SORT_BY_SKILL = 3;
-    public static final int SORT_BY_PRIORITY = 4;
 
     public static class NameSorter implements Comparator<Player>
     {
@@ -65,17 +63,6 @@ public class PlayerList extends AbstractListModel
         return o2.skill - o1.skill;
       }
     }
-    public static class PrioritySorter implements Comparator<Player>
-    {
-      public int compare(Player o1, Player o2)
-      {
-        if (o1.playing && !o2.playing)
-          return -1;
-        if (!o1.playing && o2.playing)
-          return 1;
-        return o1.priority - o2.priority;
-      }
-    }
     
     public Player()
     {
@@ -98,7 +85,6 @@ public class PlayerList extends AbstractListModel
       gamertag = t;
       playing = p;
       skill = skl;
-      priority = prio;
       passcode_hash = "";
       veto_power = false;
     }
@@ -107,8 +93,10 @@ public class PlayerList extends AbstractListModel
     {
       try
       {
-        MessageDigest md = MessageDigest.getInstance("SHA-1");
-        passcode_hash = new String(md.digest(code.getBytes()));
+        MessageDigest md = MessageDigest.getInstance("MD5");
+        String digest = hexStringFromBytes(md.digest(code.getBytes()));
+        //System.out.println("MD5(" + code + ") = " + digest);
+        passcode_hash = digest;
       }
       catch (NoSuchAlgorithmException e)
       {
@@ -116,6 +104,24 @@ public class PlayerList extends AbstractListModel
         e.printStackTrace();
         System.exit(1);
       }
+    }
+    
+    public boolean checkPasscode(String code)
+    {
+      try
+      {
+        MessageDigest md = MessageDigest.getInstance("MD5");
+        String digest = hexStringFromBytes(md.digest(code.getBytes()));
+        //System.out.println("MD5(" + code + ") = " + digest);
+        return passcode_hash.equals(digest);
+      }
+      catch (NoSuchAlgorithmException e)
+      {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+        System.exit(1);
+      }
+      return false;
     }
     
     public String getLongName()
@@ -127,8 +133,25 @@ public class PlayerList extends AbstractListModel
     {
       return name;
     }
+    
+    public static String hexStringFromBytes(byte[] b)
+    {
+      String hex = "";
+      int msb;
+      int lsb = 0;
+      int i;
+
+      // MSB maps to idx 0
+      for (i = 0; i < b.length; i++)
+      {
+        msb = ((int) b[i] & 0x000000FF) / 16;
+        lsb = ((int) b[i] & 0x000000FF) % 16;
+        hex = hex + hexChars[msb] + hexChars[lsb];
+      }
+      return (hex);
+    } 
   }
-  
+      
   private ArrayList<Player> m_players;
   private boolean m_sorted;
   private int m_sorttype;
@@ -164,9 +187,6 @@ public class PlayerList extends AbstractListModel
   {
     switch (how)
     {
-      case Player.SORT_BY_PRIORITY:
-        Collections.sort(m_players, new Player.PrioritySorter());
-        break;
       case Player.SORT_BY_SKILL:
         Collections.sort(m_players, new Player.SkillSorter());
         break;

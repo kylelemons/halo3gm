@@ -27,6 +27,8 @@ public class GameSetup
   private ArrayList<SetupChangeListener> m_listeners;
 
   private int m_gamedelay;
+
+  private boolean m_ignore_last;
   
   public GameSetup()
   {
@@ -134,6 +136,18 @@ public class GameSetup
   public int getGameDelay()
   {
     return m_gamedelay;
+  }
+  
+  public void setIgnoreLast(boolean i)
+  {
+    m_ignore_last = i;
+    fireSetupChange();
+  }
+
+  public boolean getIgnoreLastTeam()
+  {
+    // TODO Auto-generated method stub
+    return m_ignore_last;
   }
   
 }

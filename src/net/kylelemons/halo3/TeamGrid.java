@@ -142,7 +142,7 @@ public class TeamGrid extends JPanel
     {
       constraints.gridx = 0;
       constraints.gridy = t;
-      constraints.weightx = 0.4;
+      constraints.weightx = 0.7;
       ArrayList<String> team = m_teams.get(t).getMembers();
       String name = m_teams.get(t).getTeamName();
       if (name == null || name.length() <= 0)
@@ -152,12 +152,18 @@ public class TeamGrid extends JPanel
       for (int p = 0; p < max; ++p)
       {
         constraints.gridx = 1+p;
-        constraints.gridy = t;
         if (p < team.size())
           this.add( createColorLabel(team.get(p), TeamText[t], TeamColors[t], false), constraints );
         else
           this.add( createColorLabel("", TeamText[t], TeamColors[t], false), constraints );
       } // add all of the players
+      
+      /* This has been removed so as not to cause drama ^_^
+      constraints.weightx = 0.2;
+      constraints.gridx = max+1;
+      if (m_teams.get(t).totalSkill() >= 10)
+        this.add( createColorLabel(""+m_teams.get(t).totalSkill(), Color.BLACK, TeamColors[t], true), constraints );
+      */
     } // add all of the teams
     this.invalidate();
     this.validate();

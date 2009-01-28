@@ -56,4 +56,12 @@ public class Team
   {
     m_teamname = teamName;
   }
+
+  public int totalSkill()
+  {
+    int skill = 0;
+    for (int i = 0; i < m_members.size(); ++i)
+      skill += m_members.get(i).skill;
+    return skill;
+  }
 }
