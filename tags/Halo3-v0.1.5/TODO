@@ -1,0 +1,14 @@
+TODO for v0.1.6
+[ ] Battle-test player selection algorithm
+
+TODO for v1.0.0
+[ ] Remote slave games
+[ ] Finish UserGuide
+
+TODO for Later
+[ ] Add more comments... >_>... <_<...
+[ ] UI Changes
+  [ ] Game add/delete/select
+  [ ] Map add/delete/select
+[ ] Configuration
+  [ ] Add ways to configure things like port for webserver, etc
