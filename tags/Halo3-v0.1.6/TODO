@@ -1,0 +1,18 @@
+TODO for v0.1.6
+[ ] Battle-test player selection algorithm
+
+TODO for v1.0.0
+[ ] Remote slave games
+[ ] Finish UserGuide
+
+TODO for Later
+[ ] Add more comments... >_>... <_<...
+[ ] UI Changes
+  [ ] Game add/delete/select
+  [ ] Map add/delete/select
+[ ] Configuration
+  [ ] Add ways to configure things like port for webserver, etc
+[ ] Saving
+  [ ] Make the config save and load via the GameSetup class (transient already added)
+      - Note to self:  be careful here, cause we don't want to kill the GameSetup that already exists.
+      - Copy constructor, anyone?

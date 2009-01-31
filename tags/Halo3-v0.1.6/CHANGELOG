@@ -1,0 +1,88 @@
+HaloGameMaster-v0.1.2:
+
+2008-01-23  Kyle Lemons  <kyle.lemons@gatech.edu>
+  * CHANGELOG: Created the change log.
+
+HaloGameMaster-v0.1.3:
+
+2008-01-23  Kyle Lemons  <kyle.lemons@gatech.edu>
+  * HaloGameMaster: Bumped revision up to v0.1.3 after packaging up v0.1.2
+
+2008-01-23  Kyle Lemons  <kyle.lemons@gatech.edu>
+  * UserInterface.java (createContents): Added new/delete buttons
+  * CHANGELOG: Changed formatting of the CHANGELOG
+  
+  * UserInterface.java (m_activeplayer): Changed to be PlayerList.Player
+  * UserInterface.java (actionPerformed): Added player addition and duplication
+  
+  * UserInterface.java (createContents): Changed starting slider values for players to zero
+  * UserInterface.java (actionPerformed): Added player deletion
+
+2008-01-24  Kyle Lemons  <kyle.lemons@gatech.edu>
+  * HaloGameMaster.java: Added java.util.logging
+  * GameGenerator.java: Added java.util.logging
+  * UserInterface.java: Added java.util.logging
+  
+  * HaloGameMaster.java: Rearranged the default item creation order
+  
+  * PlayerList.java: Made PlayerList.Player serializable
+  * UserInterface.java: Added player loading and saving
+  
+  * MapList.java: Made MapList.Map serializable
+  * UserInterface.java: Added map loading and saving
+  
+  * GameList.java: Made GameList.GameType serializable
+  * UserInterface.java: Added game loading and saving
+    - There are still some serialization issues to work out... I'm saving the config as Strings for now
+    - Transient will fix some issues.  Adding to TODO
+  
+  * UserInterface.java: Added load/save buttons to the game pane
+  * UserInterface.java: Added game loading by default
+  
+  * UserInterface.java: Added a slider for game time
+  
+  * MapList.java: Changed icon to be a String instead of a URL (strings serialize better)
+  * UserInterface.java: Made use of the string from Map.image instead of the URL
+
+HaloGameMaster-v0.1.4:
+
+2008-01-23  Kyle Lemons  <kyle.lemons@gatech.edu>
+  * HaloGameMaster: Bumped revision up to v0.1.4 after tagging and packaging up v0.1.3
+  
+  * GameGenerator.java: Changed the player selection algorithm
+  * GameSetup.java: Added a setup parameter for "ignore last team"
+  * UserInterface.java: Changed fairness to be [0..50]
+  * UserInterface.java: Added "Ignore last team" checkbox
+  * UserInterface.java: Added "Ignore last team" to save/load
+  
+  * TeamGrid.java: Added display of a team skill label (if the skill is >= 10) (subsequently removed)
+  
+  * UserInterface.java: Added authentication pane and proxy switching into the prefs from the main screen
+  * UserInterface.java: Added bypass key to minimize window (undocumented) and enable loading (also undoc'd)
+  * UserInterface.java: Added cross-platform look and feel by default (e.g. on Mac)
+
+2008-01-28  Kyle Lemons  <kyle.lemons@gatech.edu>
+  * SimpleWebInterface.java: Added this class, with a simple iPhone-aimed web view of the game
+    - Thanks to Nate and Austin for this idea.  It's far simpler than the mirroring stuff, and probably more useful.
+  * HaloGameMaster.java: Added the web interface code to start automatically
+
+2008-01-29  Kyle Lemons  <kyle.lemons@gatech.edu>
+  * SimpleWebInterface.java: This didn't like having multiple instances.  Now it just logs it if the port is in use.
+  * RemoteUpdateServer.java: Started working on the mirror server.
+
+2008-01-30  Kyle Lemons  <kyle.lemons@gatech.edu>
+  * RemoteUpdateServer.java: Turns out, you need to flush the object output stream.
+  * RemoteUpdateClient.java: Created this class and verified it.
+  * HaloGameMaster.java: Added client, server, etc code
+  
+  * HaloGameMaster.java: Added borders and error screens to better indicate the status visually
+  * UserInterface.java: Added remote host panel to setup
+  
+  * GameGenerator.java: Added lots of comments (yay!)
+  
+  * HaloGameMaster.java: Added timer pausing support
+  * UserInterface.java: Added timer pausing support
+    - Thanks, Austin!  This works a lot better than my other random ideas to fix this issue
+  * RemoteUpdateServer.java: Added send (un)pause
+  * RemoteUpdateClient.java: Added receive (un)pause
+  * UserInterface.java: Changed so game delay updates take effect at regen, and propagate to clients
