@@ -29,8 +29,9 @@
 \contentsline {subsection}{\numberline {6.2.3}Mirror Proxies}{12}
 \contentsline {subsection}{\numberline {6.2.4}Limitations of the Mirror Server}{12}
 \contentsline {chapter}{\numberline {7}Change Log}{13}
-\contentsline {section}{\numberline {7.1}New in v0.1.5}{13}
-\contentsline {section}{\numberline {7.2}New in v0.1.4}{13}
-\contentsline {section}{\numberline {7.3}New in v0.1.3}{13}
-\contentsline {section}{\numberline {7.4}New in v0.1.2}{14}
-\contentsline {section}{\numberline {7.5}New in v0.1.1}{14}
+\contentsline {section}{\numberline {7.1}New in v0.1.6}{13}
+\contentsline {section}{\numberline {7.2}New in v0.1.5}{13}
+\contentsline {section}{\numberline {7.3}New in v0.1.4}{13}
+\contentsline {section}{\numberline {7.4}New in v0.1.3}{13}
+\contentsline {section}{\numberline {7.5}New in v0.1.2}{14}
+\contentsline {section}{\numberline {7.6}New in v0.1.1}{14}

@@ -38,15 +38,19 @@ public class RemoteUpdateServer implements Runnable
 
   private int                           m_delay;
 
+  private boolean                       m_paused;
+
   class UpdateClientThread implements Runnable
   {
     private Socket  m_client;
     private Boolean m_send_update;
+    private Boolean m_send_pause;
 
     UpdateClientThread(Socket client)
     {
       this.m_client = client;
       m_send_update = false;
+      m_send_pause = false;
     }
 
     public void run()
@@ -71,7 +75,16 @@ public class RemoteUpdateServer implements Runnable
               m_send_update.wait();
             }
             if (!m_client.isConnected()) break;
-            if (m_teams != null)
+            if (m_send_pause)
+            {
+              if (m_paused)
+                out.writeObject("Pause");
+              else
+                out.writeObject("Unpause");
+              m_send_pause = false;
+              logger.info("Sent pause to client");
+            }
+            else if (m_teams != null)
             {
               // Send Teams
               out.writeObject("Update");
@@ -79,9 +92,9 @@ public class RemoteUpdateServer implements Runnable
               out.writeObject(m_game);
               out.writeObject(m_map);
               out.writeObject(m_delay);
-              out.flush();
               logger.info("Sent update to client");
             }
+            out.flush();
           }
           while (m_client.isConnected() && !Thread.interrupted());
         }
@@ -104,6 +117,15 @@ public class RemoteUpdateServer implements Runnable
     {
       synchronized (m_send_update)
       {
+        if (m_send_update) m_send_update.notifyAll();
+      }
+    }
+
+    public void sendPause()
+    {
+      synchronized (m_send_update)
+      {
+        m_send_pause = true;
         if (m_send_update) m_send_update.notifyAll();
       }
     }
@@ -159,9 +181,19 @@ public class RemoteUpdateServer implements Runnable
     m_game = game;
     m_map = map;
     m_delay = delay;
+    m_paused = false;
     for (int i = 0; i < m_clients.size(); ++i)
     {
       if (m_threads.get(i).isAlive()) m_clients.get(i).sendUpdate();
+    }
+  }
+
+  public void setTimerPaused(boolean pauseState)
+  {
+    m_paused = pauseState;
+    for (int i = 0; i < m_clients.size(); ++i)
+    {
+      if (m_threads.get(i).isAlive()) m_clients.get(i).sendPause();
     }
   }
 }
