@@ -3,52 +3,55 @@
  */
 package net.kylelemons.halo3;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
  * @author eko
- *
+ * 
  */
-public class Team
+public class Team implements Serializable
 {
+  private static final long            serialVersionUID = 2865566082926115926L;
+
   private ArrayList<PlayerList.Player> m_members;
-  private String m_teamname;
-  
+  private String                       m_teamname;
+
   public Team(String teamname)
   {
     m_teamname = teamname;
     m_members = new ArrayList<PlayerList.Player>();
   }
-  
+
   public void clear()
   {
     m_members = new ArrayList<PlayerList.Player>();
   }
-  
+
   public void add(PlayerList.Player p)
   {
     m_members.add(p);
   }
-  
+
   public int size()
   {
     return m_members.size();
   }
-  
+
   public String getTeamName()
   {
     return m_teamname;
   }
-  
+
   public ArrayList<String> getMembers()
   {
     ArrayList<String> strings = new ArrayList<String>();
     for (int i = 0; i < m_members.size(); ++i)
       strings.add(m_members.get(i).toString());
     /*
-    for (int i = 0; i < m_members.size(); ++i)
-      strings.add(m_members.get(i).getLongName());
-    */
+     * for (int i = 0; i < m_members.size(); ++i)
+     * strings.add(m_members.get(i).getLongName());
+     */
     return strings;
   }
 

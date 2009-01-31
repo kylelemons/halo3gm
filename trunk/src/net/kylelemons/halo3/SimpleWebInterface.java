@@ -9,9 +9,12 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
+import java.net.BindException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import net.kylelemons.halo3.GameList.GameType;
 import net.kylelemons.halo3.MapList.Map;
@@ -22,14 +25,16 @@ import net.kylelemons.halo3.MapList.Map;
  */
 public class SimpleWebInterface implements Runnable
 {
-  public static final int DEFAULT_PORT    = 1880; // TODO: Configurable
-  public static final int MAX_CONNECTIONS = 1024;
+  public static final int    DEFAULT_PORT    = 1880;                                    // TODO:
+  // Configurable
+  public static final int    MAX_CONNECTIONS = 1024;
   public static final String TITLE_FONT_SIZE = "48pt";
-  public static final String NAME_FONT_SIZE = "24pt";
-  private int             m_port;
-  private Team[] m_teams;
-  private GameType m_game;
-  private Map m_map;
+  public static final String NAME_FONT_SIZE  = "24pt";
+  private int                m_port;
+  private Team[]             m_teams;
+  private GameType           m_game;
+  private Map                m_map;
+  private static Logger      logger          = Logger.getLogger("net.kylelemons.halo3");
 
   class doComms implements Runnable
   {
@@ -50,11 +55,12 @@ public class SimpleWebInterface implements Runnable
         BufferedReader in = new BufferedReader(new InputStreamReader(server.getInputStream()));
         PrintStream out = new PrintStream(server.getOutputStream());
 
-        while ((line = in.readLine()) != null && !line.equals("")) // no line terminators
+        while ((line = in.readLine()) != null && !line.equals("")) // no line
+        // terminators
         {
           System.out.println("Headers: " + line);
         }
-        
+
         out.println("HTTP/1.0 200 GOOD");
         out.println("");
         if (m_game == null)
@@ -87,13 +93,13 @@ public class SimpleWebInterface implements Runnable
           out.println("{");
           out.println("  padding: 4px;");
           out.println("  width: 100%;");
-          out.println("  font-size: "+TITLE_FONT_SIZE+";");
+          out.println("  font-size: " + TITLE_FONT_SIZE + ";");
           out.println("}");
           out.println("TD");
           out.println("{");
           out.println("  padding: 6px;");
           out.println("  width: 100%;");
-          out.println("  font-size: "+NAME_FONT_SIZE+";");
+          out.println("  font-size: " + NAME_FONT_SIZE + ";");
           out.println("  text-align: center;");
           out.println("}");
           for (int i = 0; i < TeamGrid.TeamColors.length; ++i)
@@ -126,13 +132,13 @@ public class SimpleWebInterface implements Runnable
           for (int t = 0; t < m_teams.length; ++t)
           {
             String color = TeamGrid.TeamNames[t].toLowerCase();
-            out.println("<!-- Team #" + (t+1) + ": " + color + " -->");
+            out.println("<!-- Team #" + (t + 1) + ": " + color + " -->");
             Team team = m_teams[t];
             ArrayList<String> members = team.getMembers();
-            
-            out.println("<tr><th class=\""+color+"\">" + team.getTeamName() + "</th></tr>");
+
+            out.println("<tr><th class=\"" + color + "\">" + team.getTeamName() + "</th></tr>");
             for (int i = 0; i < team.size(); ++i)
-              out.println("<tr><td class=\""+color+"\">"+ members.get(i)+"</th></tr>");
+              out.println("<tr><td class=\"" + color + "\">" + members.get(i) + "</th></tr>");
           }
           out.println("</table>");
           out.println("</body>");
@@ -143,8 +149,7 @@ public class SimpleWebInterface implements Runnable
       }
       catch (IOException ioe)
       {
-        System.out.println("IOException on socket listen: " + ioe);
-        ioe.printStackTrace();
+        logger.log(Level.WARNING, "IOException on socket listen", ioe);
       }
     }
 
@@ -156,11 +161,14 @@ public class SimpleWebInterface implements Runnable
     {
       String hex;
       String red = Integer.toString(fg.getRed(), 16);
-      while (red.length() < 2) red = "0" + red;
+      while (red.length() < 2)
+        red = "0" + red;
       String green = Integer.toString(fg.getGreen(), 16);
-      while (green.length() < 2) green = "0" + green;
+      while (green.length() < 2)
+        green = "0" + green;
       String blue = Integer.toString(fg.getBlue(), 16);
-      while (blue.length() < 2) blue = "0" + blue;
+      while (blue.length() < 2)
+        blue = "0" + blue;
       hex = "#" + red + green + blue;
       return hex;
     }
@@ -187,7 +195,7 @@ public class SimpleWebInterface implements Runnable
 
       while ((i++ < MAX_CONNECTIONS) || (MAX_CONNECTIONS == 0))
       {
-        //doComms connection;
+        // doComms connection;
 
         server = listener.accept();
         doComms conn_c = new doComms(server);
@@ -195,10 +203,13 @@ public class SimpleWebInterface implements Runnable
         t.start();
       }
     }
+    catch (BindException e)
+    {
+      logger.warning("Could not bind webserver socket (probably already in use)");
+    }
     catch (IOException ioe)
     {
-      System.out.println("IOException on socket listen: " + ioe);
-      ioe.printStackTrace();
+      logger.log(Level.WARNING, "IOException on socket listen", ioe);
     }
   }
 
