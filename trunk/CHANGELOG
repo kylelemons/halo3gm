@@ -33,6 +33,8 @@ HaloGameMaster-v0.1.3:
   
   * GameList.java: Made GameList.GameType serializable
   * UserInterface.java: Added game loading and saving
+    - There are still some serialization issues to work out... I'm saving the config as Strings for now
+    - Transient will fix some issues.  Adding to TODO
   
   * UserInterface.java: Added load/save buttons to the game pane
   * UserInterface.java: Added game loading by default
@@ -58,3 +60,29 @@ HaloGameMaster-v0.1.4:
   * UserInterface.java: Added authentication pane and proxy switching into the prefs from the main screen
   * UserInterface.java: Added bypass key to minimize window (undocumented) and enable loading (also undoc'd)
   * UserInterface.java: Added cross-platform look and feel by default (e.g. on Mac)
+
+2008-01-28  Kyle Lemons  <kyle.lemons@gatech.edu>
+  * SimpleWebInterface.java: Added this class, with a simple iPhone-aimed web view of the game
+    - Thanks to Nate and Austin for this idea.  It's far simpler than the mirroring stuff, and probably more useful.
+  * HaloGameMaster.java: Added the web interface code to start automatically
+
+2008-01-29  Kyle Lemons  <kyle.lemons@gatech.edu>
+  * SimpleWebInterface.java: This didn't like having multiple instances.  Now it just logs it if the port is in use.
+  * RemoteUpdateServer.java: Started working on the mirror server.
+
+2008-01-30  Kyle Lemons  <kyle.lemons@gatech.edu>
+  * RemoteUpdateServer.java: Turns out, you need to flush the object output stream.
+  * RemoteUpdateClient.java: Created this class and verified it.
+  * HaloGameMaster.java: Added client, server, etc code
+  
+  * HaloGameMaster.java: Added borders and error screens to better indicate the status visually
+  * UserInterface.java: Added remote host panel to setup
+  
+  * GameGenerator.java: Added lots of comments (yay!)
+  
+  * HaloGameMaster.java: Added timer pausing support
+  * UserInterface.java: Added timer pausing support
+    - Thanks, Austin!  This works a lot better than my other random ideas to fix this issue
+  * RemoteUpdateServer.java: Added send (un)pause
+  * RemoteUpdateClient.java: Added receive (un)pause
+  * UserInterface.java: Changed so game delay updates take effect at regen, and propagate to clients

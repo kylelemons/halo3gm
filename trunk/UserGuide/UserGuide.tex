@@ -31,6 +31,7 @@ F2 & P & Switch to the Player Editor \\
 F3 & G & Switch to the Game/Map Editor \\
 F4 & S & Switch to the Setup Editor \\
 F5 & R & Hold for 4 seconds to regenerate the Game \\
+F11 & T & Time-out (pause the timer) \\
 & H & Start local server Hosting \\
 & C & Connect to configured remote server \\
 \end{tabular}
@@ -112,7 +113,7 @@ The fairness slider controls how hard the game works to make the teams fair.  At
 The fairness of the game is determined by adding up the skills of all players on each team, and finding the difference between the team with the highest total skill and the team with the lowest total skill.  The fairest game is the one in which this difference is smallest.
 
 \section{Time Between Games}
-When a game is generated, the counter begins counting down from this number, and at zero the progress bar will display the text ``Game Time!''  This setting\footnote{This setting is one of the few that behave this way.  Most will cause the game to be generated fresh.} can be changed without causing the game to be regenerated; the counter will simply recalculate how much time is left based on when the game was originally generated.
+When a game is generated, the counter begins counting down from this number, and at zero the progress bar will display the text ``Game Time!''  This setting\footnote{This setting is one of the few that behave this way.  Most will cause the game to be generated afresh.} can be changed without causing the game to be regenerated; but\footnote{This behavior applies as of v0.1.6, before that the counter \textbf{would} recalculate the new time.} the counter will only reflect this change when a new game is generated.  If more time is desired, pause the game timer or regenerate the game.
 
 \section{Team Names}
 These eight fields contain the names of the teams as they will display on the main game screen.  The top row, from left to right, is for the first four teams, the second row for the last four.  Any teams not generated may have a name, but the name and team will not be shown on the main player table.
@@ -148,6 +149,11 @@ Should forwarding be an issue for game mirroring, it is possible to proxy the se
 The view-only screens have no access to the data on the main server.  While this is the general idea, it does cause one slight problem:  The game delay only gets broadcasted when the game is regenerated, so slave screens will maintain the same delay even if the master screen has its delay updated.  This may change in later versions\footnote{For instance, it may be that the main screen's delay doesn't update until it regenerates as well.}.
 
 \chapter{Change Log}
+\section{New in v0.1.6}
+\begin{itemize}
+\item Local and remote game timer pausing (``T'' command)
+\item Game timer updates now wait for a regen to apply (fixes network timer synchronization issues\footnote{If anyone has better suggestions or depended on this feature, let me know} that were caused if this was changed mid-game)
+\end{itemize}
 \section{New in v0.1.5}
 \begin{itemize}
 \item Built-in mobile web viewer (port 1880)

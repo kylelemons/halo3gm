@@ -65,7 +65,8 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.text.BadLocationException;
 
-public class UserInterface implements KeyListener, ChangeListener, ActionListener, DocumentListener, ListSelectionListener, ItemListener, PropertyChangeListener
+public class UserInterface implements KeyListener, ChangeListener, ActionListener, DocumentListener,
+    ListSelectionListener, ItemListener, PropertyChangeListener
 {
   private static final int       FRAME_MIN_SIZE   = 300;
 
@@ -111,6 +112,10 @@ public class UserInterface implements KeyListener, ChangeListener, ActionListene
 
   private JPasswordField         m_authpassfield;
 
+  private boolean                m_paused;
+
+  private int                    m_gamedelay;
+
   // TODO: Pending screen login
   // TODO: Setup parameter for "ignore last team"
 
@@ -129,6 +134,8 @@ public class UserInterface implements KeyListener, ChangeListener, ActionListene
     m_fskeylisteners = new ArrayList<KeyListener>();
     m_timerunner = null;
     m_databasestatus = null;
+    m_setup = new GameSetup();
+    m_gamedelay = m_setup.getGameDelay();
   }
 
   public void setup()
@@ -498,7 +505,9 @@ public class UserInterface implements KeyListener, ChangeListener, ActionListene
     m_maplabel.setFont(new Font("Serif", Font.BOLD, screenHeight / 20));
     contentPane.add(m_maplabel);
 
-    layout.getConstraints(m_maplabel).setX(Spring.sum(Spring.constant(screenWidth / 2), Spring.minus(Spring.scale(layout.getConstraints(m_maplabel).getWidth(), 0.5f))));
+    layout.getConstraints(m_maplabel).setX(
+        Spring.sum(Spring.constant(screenWidth / 2), Spring.minus(Spring.scale(layout.getConstraints(m_maplabel)
+            .getWidth(), 0.5f))));
     layout.putConstraint(SpringLayout.SOUTH, m_maplabel, -25, SpringLayout.SOUTH, contentPane);
 
     m_teamgrid = new TeamGrid();
@@ -508,7 +517,9 @@ public class UserInterface implements KeyListener, ChangeListener, ActionListene
 
     layout.getConstraints(m_teamgrid).setWidth(Spring.constant(screenWidth * 4 / 5));
     layout.getConstraints(m_teamgrid).setHeight(Spring.constant(screenHeight * 2 / 9));
-    layout.getConstraints(m_teamgrid).setX(Spring.sum(Spring.constant(screenWidth / 2), Spring.minus(Spring.scale(layout.getConstraints(m_teamgrid).getWidth(), 0.5f))));
+    layout.getConstraints(m_teamgrid).setX(
+        Spring.sum(Spring.constant(screenWidth / 2), Spring.minus(Spring.scale(layout.getConstraints(m_teamgrid)
+            .getWidth(), 0.5f))));
     layout.putConstraint(SpringLayout.NORTH, m_teamgrid, screenHeight / 15, SpringLayout.NORTH, contentPane);
 
     m_gametime = new JProgressBar();
@@ -523,7 +534,9 @@ public class UserInterface implements KeyListener, ChangeListener, ActionListene
     layout.putConstraint(SpringLayout.NORTH, m_gametime, 25, SpringLayout.SOUTH, m_teamgrid);
     layout.getConstraints(m_gametime).setWidth(Spring.constant(screenWidth / 2));
     layout.getConstraints(m_gametime).setHeight(Spring.constant(screenHeight / 25));
-    layout.getConstraints(m_gametime).setX(Spring.sum(Spring.constant(screenWidth / 2), Spring.minus(Spring.scale(layout.getConstraints(m_gametime).getWidth(), 0.5f))));
+    layout.getConstraints(m_gametime).setX(
+        Spring.sum(Spring.constant(screenWidth / 2), Spring.minus(Spring.scale(layout.getConstraints(m_gametime)
+            .getWidth(), 0.5f))));
 
     // Mid Level
     // contentPane.add(playerPane, BorderLayout.PAGE_START);
@@ -961,17 +974,14 @@ public class UserInterface implements KeyListener, ChangeListener, ActionListene
   {
     /* Process these keys always */
     /*
-     * { System.out.println("Help:");
-     * System.out.println("  F1  Esc  - Display Game Screen or Help (this)");
-     * System.out.println("  F2  P    - Launch Player Editor");
-     * System.out.println("  F3  G    - Launch Game/Map Editor");
+     * { System.out.println("Help:"); System.out.println("  F1  Esc  - Display Game Screen or Help (this)");
+     * System.out.println("  F2  P    - Launch Player Editor"); System.out.println("  F3  G    - Launch Game/Map Editor");
      * System.out.println("      Q    - Quit"); System.exit(0); }
      */
     switch (e.getKeyCode())
     {
       /*
-       * Undocumented feature: Press F12 to minimize from fullscreen, M to
-       * restore fullscreen
+       * Undocumented feature: Press F12 to minimize from fullscreen, M to restore fullscreen
        */
       case KeyEvent.VK_F12:
         if (m_fsframe.getContentPane() == m_maincontent)
@@ -983,8 +993,7 @@ public class UserInterface implements KeyListener, ChangeListener, ActionListene
         }
 
         /*
-         * Undocumented feature: Press F12 enable the load database button
-         * (backdoor into editing a database)
+         * Undocumented feature: Press F12 enable the load database button (backdoor into editing a database)
          */
         if (m_fsframe.getContentPane() == m_setupeditor)
         {
@@ -1064,7 +1073,8 @@ public class UserInterface implements KeyListener, ChangeListener, ActionListene
       boolean activeMajors = false;
       for (int i = 0; !goToFrame && i < m_playerlist.getSize(); ++i)
       {
-        if (m_playerlist.getPlayers().get(i).veto_power && m_playerlist.getPlayers().get(i).passcode_hash.length() > 0) activeMajors = true;
+        if (m_playerlist.getPlayers().get(i).veto_power && m_playerlist.getPlayers().get(i).passcode_hash.length() > 0)
+          activeMajors = true;
       }
       if (!activeMajors) goToFrame = true;
     }
@@ -1472,10 +1482,12 @@ public class UserInterface implements KeyListener, ChangeListener, ActionListene
     }
     m_teamgrid.apply();
 
-    m_maplabel.setIcon(new ImageIcon(Toolkit.getDefaultToolkit().getImage(HaloGameMaster.class.getResource(map.image))));
+    m_maplabel
+        .setIcon(new ImageIcon(Toolkit.getDefaultToolkit().getImage(HaloGameMaster.class.getResource(map.image))));
     m_maplabel.setText(game + " on " + map);
 
     m_gamestarttime = System.currentTimeMillis();
+    m_gamedelay = m_setup.getGameDelay();
 
     if (m_timerunner == null)
     {
@@ -1483,17 +1495,34 @@ public class UserInterface implements KeyListener, ChangeListener, ActionListene
         public Object construct()
         {
           logger.info("Worker Starting");
-          m_gametime.putClientProperty("max", (int) m_setup.getGameDelay());
+          m_gamedelay = m_setup.getGameDelay();
+          m_gametime.putClientProperty("max", (int) m_gamedelay);
           m_gametime.putClientProperty("val", (int) 0);
           while (true)
           {
+            long pause_pausestart = System.currentTimeMillis();
+            long pause_gamestart = m_gamestarttime;
+            if (m_paused) logger.info("Starting pause loop...");
+            while (m_paused)
+            {
+              try
+              {
+                Thread.sleep(100);
+              }
+              catch (Exception e)
+              {
+                logger.warning("Interrupted");
+              }
+            }
+            if (m_gamestarttime == pause_gamestart) m_gamestarttime += System.currentTimeMillis() - pause_pausestart;
             int elapsed = (int) ((System.currentTimeMillis() - m_gamestarttime) / 1000);
-            if (elapsed <= m_setup.getGameDelay())
+            if (elapsed <= m_gamedelay)
             {
               m_gametime.putClientProperty("val", elapsed);
-              int minsleft = (int) ((m_setup.getGameDelay() - elapsed) / 60);
-              int secsleft = (int) ((m_setup.getGameDelay() - elapsed) % 60);
-              m_gametime.putClientProperty("str", "Remaining: " + minsleft + ":" + (secsleft < 10 ? "0" : "") + secsleft);
+              int minsleft = (int) ((m_gamedelay - elapsed) / 60);
+              int secsleft = (int) ((m_gamedelay - elapsed) % 60);
+              m_gametime.putClientProperty("str", "Remaining: " + minsleft + ":" + (secsleft < 10 ? "0" : "")
+                  + secsleft);
             }
             else
             {
@@ -1547,8 +1576,7 @@ public class UserInterface implements KeyListener, ChangeListener, ActionListene
   }
 
   /**
-   * This should be set before the components are generated so that it can
-   * reflect any changes in the game setup
+   * This should be set before the components are generated so that it can reflect any changes in the game setup
    * 
    * @param setup
    *          The setup to use to mirror the UI
@@ -1556,6 +1584,7 @@ public class UserInterface implements KeyListener, ChangeListener, ActionListene
   public void setSetup(GameSetup setup)
   {
     m_setup = setup;
+    m_gamedelay = m_setup.getGameDelay();
   }
 
   public void propertyChange(PropertyChangeEvent e)
@@ -1575,13 +1604,19 @@ public class UserInterface implements KeyListener, ChangeListener, ActionListene
       {
         prog.setString((String) e.getNewValue());
       }
-      logger.fine("Property Change: ProgressBar[" + e.getPropertyName() + "] from " + e.getOldValue() + " to " + e.getNewValue());
+      logger.fine("Property Change: ProgressBar[" + e.getPropertyName() + "] from " + e.getOldValue() + " to "
+          + e.getNewValue());
     }
   }
 
   public void setWarningBorder(Color color)
   {
     m_maincontent.setBorder(new LineBorder(color, 10));
+  }
+
+  public void setTimerPaused(boolean paused)
+  {
+    m_paused = paused;
   }
 
 }

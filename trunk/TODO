@@ -12,3 +12,7 @@ TODO for Later
   [ ] Map add/delete/select
 [ ] Configuration
   [ ] Add ways to configure things like port for webserver, etc
+[ ] Saving
+  [ ] Make the config save and load via the GameSetup class (transient already added)
+      - Note to self:  be careful here, cause we don't want to kill the GameSetup that already exists.
+      - Copy constructor, anyone?

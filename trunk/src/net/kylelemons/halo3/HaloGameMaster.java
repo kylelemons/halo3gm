@@ -14,7 +14,8 @@ import net.kylelemons.halo3.MapList.Map;
 import net.kylelemons.halo3.PlayerList.Player;
 import net.kylelemons.halo3.RemoteUpdateClient.RemoteUpdateListener;
 
-public class HaloGameMaster implements GameGenerator.GameChangedListener, UserInterface.KeyListener, SetupChangeListener, RemoteUpdateListener
+public class HaloGameMaster implements GameGenerator.GameChangedListener, UserInterface.KeyListener,
+    SetupChangeListener, RemoteUpdateListener
 {
   private UserInterface      m_ui;
   private GameGenerator      m_gen;
@@ -26,7 +27,7 @@ public class HaloGameMaster implements GameGenerator.GameChangedListener, UserIn
 
   // TODO Logging
   public static final String APPLICATION = "HaloGameMaster";
-  public static final String VERSION     = "v0.1.5";
+  public static final String VERSION     = "v0.1.6";
   private long               m_regen_start_time;
   private SimpleWebInterface m_webserver;
   private Thread             m_webthread;
@@ -36,6 +37,7 @@ public class HaloGameMaster implements GameGenerator.GameChangedListener, UserIn
   private RemoteUpdateClient m_remoteclient;
   private boolean            m_clientstarted;
   private boolean            m_serverstarted;
+  private boolean            m_paused;
 
   private static Logger      logger      = Logger.getLogger("net.kylelemons.halo3");
 
@@ -172,6 +174,9 @@ public class HaloGameMaster implements GameGenerator.GameChangedListener, UserIn
     if (!m_clientstarted)
     {
       logger.info("Updating game UI");
+      m_paused = false;
+      m_ui.setTimerPaused(m_paused);
+      if (m_serverstarted) m_remoteupdate.setTimerPaused(m_paused);
       m_ui.setGame(teams, game, map);
       m_webserver.setGame(teams, game, map);
       m_remoteupdate.setGame(teams, game, map, m_setup.getGameDelay());
@@ -214,11 +219,11 @@ public class HaloGameMaster implements GameGenerator.GameChangedListener, UserIn
         if (!m_clientstarted)
         {
           logger.info("Starting remote update client");
+          m_clientstarted = true;
           m_remoteclient.setIP(m_setup.getServerHost());
           // m_remoteclient.removeRemoteUpdateListener(this);
           m_remoteclient.addRemoteUpdateListener(this);
           m_clientthread.start();
-          m_clientstarted = true;
         }
         m_ui.setWarningBorder(Color.GREEN);
         break;
@@ -228,11 +233,22 @@ public class HaloGameMaster implements GameGenerator.GameChangedListener, UserIn
         if (!m_serverstarted)
         {
           logger.info("Starting remote update server");
-          m_remotethread.start();
           m_serverstarted = true;
+          m_remotethread.start();
         }
         m_ui.setWarningBorder(Color.BLUE);
         break;
+      }
+      case KeyEvent.VK_T:
+      case KeyEvent.VK_F11:
+      {
+        if (eventID == KeyEvent.KEY_PRESSED)
+        {
+          m_paused ^= true;
+          m_ui.setTimerPaused(m_paused);
+          if (m_serverstarted) m_remoteupdate.setTimerPaused(m_paused);
+          m_ui.setWarningBorder(m_paused ? Color.WHITE : Color.BLACK);
+        }
       }
     }
   }
@@ -273,6 +289,14 @@ public class HaloGameMaster implements GameGenerator.GameChangedListener, UserIn
     m_webserver.setGame(teams, game, map);
     m_ui.setWarningBorder(Color.BLACK);
     m_remoteupdate.setGame(teams, game, map, delay); // allows proxying
+  }
+
+  public void RemotePause(boolean pauseUnpause)
+  {
+    m_paused = pauseUnpause;
+    m_ui.setTimerPaused(m_paused);
+    if (m_serverstarted) m_remoteupdate.setTimerPaused(m_paused);
+    m_ui.setWarningBorder(m_paused ? Color.WHITE : Color.BLACK);
   }
 
 }

@@ -63,6 +63,14 @@ public class RemoteUpdateClient implements Runnable
      *          The exception condition... this may be null
      */
     void RemoteError(String error, Throwable exception);
+
+    /**
+     * Notify of a remote pause or unpause event
+     * 
+     * @param pauseUnpause
+     *          True for a pause, false for an unpause
+     */
+    void RemotePause(boolean pauseUnpause);
   }
 
   RemoteUpdateClient(int port)
@@ -99,6 +107,7 @@ public class RemoteUpdateClient implements Runnable
           String cmd = (String) obj;
           if (cmd.equals("Update"))
           {
+            logger.info("Update command received");
             m_teams = (Team[]) in.readObject();
             m_game = (GameType) in.readObject();
             m_map = (Map) in.readObject();
@@ -106,6 +115,18 @@ public class RemoteUpdateClient implements Runnable
             logger.info("Completed Update");
             fireRemoteUpdate();
           }
+          else if (cmd.equals("Pause"))
+          {
+            logger.info("Pause command received");
+            fireRemotePause(true);
+          }
+          else if (cmd.equals("Unpause"))
+          {
+            logger.info("Unpause command received");
+            fireRemotePause(false);
+          }
+          else
+            logger.warning("Unknown command: " + cmd);
         }
         else
         {
@@ -183,6 +204,29 @@ public class RemoteUpdateClient implements Runnable
       try
       {
         m_listeners.get(i).RemoteError(error, exception);
+      }
+      catch (Exception e)
+      {
+        e.printStackTrace();
+        logger.severe("Exception in listener! Deleting.");
+        deleteIndices.add(i);
+      }
+    }
+    // Remove from last to first to maintain indices
+    for (int d = deleteIndices.size() - 1; d >= 0; ++d)
+    {
+      m_listeners.remove(deleteIndices.get(d));
+    }
+  }
+
+  private void fireRemotePause(boolean pauseUnpause)
+  {
+    ArrayList<Integer> deleteIndices = new ArrayList<Integer>();
+    for (int i = 0; i < m_listeners.size(); ++i)
+    {
+      try
+      {
+        m_listeners.get(i).RemotePause(pauseUnpause);
       }
       catch (Exception e)
       {
