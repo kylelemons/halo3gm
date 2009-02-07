@@ -1,7 +1,7 @@
 \documentclass[10pt,a4paper]{report}
 \author{Kyle Lemons}
 \title{Halo3 Game Master User's Guide \\
-{\large{Current Version: Halo3-v0.1.5}}}
+{\large{Current Version: Halo3-v0.1.7}}}
 \begin{document}
 \maketitle
 \tableofcontents
@@ -34,6 +34,7 @@ F5 & R & Hold for 4 seconds to regenerate the Game \\
 F11 & T & Time-out (pause the timer) \\
 & H & Start local server Hosting \\
 & C & Connect to configured remote server \\
+& \textbackslash & Toggle display of team skills \\
 \end{tabular}
 
 \section{Player Editor}
@@ -149,6 +150,13 @@ Should forwarding be an issue for game mirroring, it is possible to proxy the se
 The view-only screens have no access to the data on the main server.  While this is the general idea, it does cause one slight problem:  The game delay only gets broadcasted when the game is regenerated, so slave screens will maintain the same delay even if the master screen has its delay updated.  This may change in later versions\footnote{For instance, it may be that the main screen's delay doesn't update until it regenerates as well.}.
 
 \chapter{Change Log}
+\section{New in v0.1.7}
+\begin{itemize}
+\item Team fairness level now goes up to 500
+\item Game time progress bar now properly reflects time remaining
+\item Fixed the wording for the game fairness choices
+\item Changed the team weighting to allow an arbitrary number of fair teams
+\end{itemize}
 \section{New in v0.1.6}
 \begin{itemize}
 \item Local and remote game timer pausing (``T'' command)

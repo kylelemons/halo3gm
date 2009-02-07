@@ -31,7 +31,7 @@ public class GameSetup implements Serializable
 
   private int                                      m_gamedelay;
 
-  private boolean                                  m_ignore_last;
+  private int                                      m_fair_teams;
 
   public GameSetup()
   {
@@ -127,8 +127,7 @@ public class GameSetup implements Serializable
   }
 
   /**
-   * This does not fire the setup changed, as it shouldn't really affect the
-   * generated game
+   * This does not fire the setup changed, as it shouldn't really affect the generated game
    * 
    * @param seconds
    *          How many seconds to wait in between games
@@ -143,16 +142,16 @@ public class GameSetup implements Serializable
     return m_gamedelay;
   }
 
-  public void setIgnoreLast(boolean i)
+  public void setFairTeamCount(int i)
   {
-    m_ignore_last = i;
+    m_fair_teams = i;
     fireSetupChange();
   }
 
-  public boolean getIgnoreLastTeam()
+  public int getFairTeamCount()
   {
     // TODO Auto-generated method stub
-    return m_ignore_last;
+    return m_fair_teams;
   }
 
   public String getServerHost()

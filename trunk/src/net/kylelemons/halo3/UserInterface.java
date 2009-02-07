@@ -203,7 +203,7 @@ public class UserInterface implements KeyListener, ChangeListener, ActionListene
         m_setup.setFairness((Integer) input.readObject());
         m_setup.setGameDelay((Integer) input.readObject());
         m_setup.setTeamCount((Integer) input.readObject());
-        m_setup.setIgnoreLast((Boolean) input.readObject());
+        m_setup.setFairTeamCount((Integer) input.readObject());
         m_setup.setServerHost((String) input.readObject());
         for (int i = 0; i < GameSetup.MAX_ALLOWED_TEAMS; ++i)
         {
@@ -285,7 +285,7 @@ public class UserInterface implements KeyListener, ChangeListener, ActionListene
         output.writeObject(m_setup.getFairness());
         output.writeObject(m_setup.getGameDelay());
         output.writeObject(m_setup.getTeamCount());
-        output.writeObject(m_setup.getIgnoreLastTeam());
+        output.writeObject(m_setup.getFairTeamCount());
         output.writeObject(m_setup.getServerHost());
         for (int i = 0; i < GameSetup.MAX_ALLOWED_TEAMS; ++i)
         {
@@ -474,9 +474,6 @@ public class UserInterface implements KeyListener, ChangeListener, ActionListene
     m_fsframe.setVisible(true);
   }
 
-  /**
-   * 
-   */
   private void createContents()
   {
     // Use these!
@@ -775,26 +772,39 @@ public class UserInterface implements KeyListener, ChangeListener, ActionListene
     setupPanel.add(teamCountPanel);
 
     JPanel fairnessPanel = new JPanel();
-    fairnessPanel.setBorder(new TitledBorder("Player Allocation"));
-    fairnessPanel.setLayout(new FlowLayout());
-    fairnessPanel.add(new JLabel("How fair should the teams be?"));
-    JSlider fairness = new JSlider(JSlider.HORIZONTAL, 0, 50, m_setup.getFairness());
-    fairness.setMajorTickSpacing(10);
-    fairness.setMinorTickSpacing(5);
-    fairness.setPaintTicks(true);
-    fairness.setPaintLabels(true);
-    fairness.setSnapToTicks(true);
-    fairness.setName("Fairness");
-    fairness.addKeyListener(this);
-    fairness.addChangeListener(this);
-    fairnessPanel.add(fairness);
-    JCheckBox ignoreLast = new JCheckBox("Ignore last team");
-    ignoreLast.setName("Ignore Last");
-    ignoreLast.addItemListener(this);
-    ignoreLast.addKeyListener(this);
-    ignoreLast.setSelected(m_setup.getIgnoreLastTeam());
-    fairnessPanel.add(ignoreLast);
-    setupPanel.add(fairnessPanel);
+    {
+      fairnessPanel.setBorder(new TitledBorder("Player Allocation"));
+      fairnessPanel.setLayout(new FlowLayout());
+      fairnessPanel.add(new JLabel("Choose the fairest of "));
+      JSlider fairness = new JSlider(JSlider.HORIZONTAL, 0, 500, m_setup.getFairness());
+      {
+        fairness.setMajorTickSpacing(100);
+        fairness.setMinorTickSpacing(20);
+        fairness.setPaintTicks(true);
+        fairness.setPaintLabels(true);
+        fairness.setSnapToTicks(true);
+        fairness.setName("Fairness");
+        fairness.addKeyListener(this);
+        fairness.addChangeListener(this);
+      }
+      fairnessPanel.add(fairness);
+      fairnessPanel.add(new JLabel("possible games with the first"));
+      JSlider fairTeamCount = new JSlider(JSlider.HORIZONTAL, 0, 8, m_setup.getFairTeamCount());
+      {
+        fairTeamCount.setMajorTickSpacing(4);
+        fairTeamCount.setMinorTickSpacing(1);
+        fairTeamCount.setName("Fair Teams");
+        fairTeamCount.setPaintTicks(true);
+        fairTeamCount.setPaintLabels(true);
+        fairTeamCount.setSnapToTicks(true);
+        fairTeamCount.addChangeListener(this);
+        fairTeamCount.addKeyListener(this);
+        fairTeamCount.setPreferredSize(new Dimension(100, fairTeamCount.getPreferredSize().height));
+      }
+      fairnessPanel.add(fairTeamCount);
+      fairnessPanel.add(new JLabel("teams."));
+      setupPanel.add(fairnessPanel);
+    }
 
     JPanel delayPanel = new JPanel();
     delayPanel.setBorder(new TitledBorder("Time Between Games"));
@@ -975,8 +985,9 @@ public class UserInterface implements KeyListener, ChangeListener, ActionListene
     /* Process these keys always */
     /*
      * { System.out.println("Help:"); System.out.println("  F1  Esc  - Display Game Screen or Help (this)");
-     * System.out.println("  F2  P    - Launch Player Editor"); System.out.println("  F3  G    - Launch Game/Map Editor");
-     * System.out.println("      Q    - Quit"); System.exit(0); }
+     * System.out.println("  F2  P    - Launch Player Editor");
+     * System.out.println("  F3  G    - Launch Game/Map Editor"); System.out.println("      Q    - Quit");
+     * System.exit(0); }
      */
     switch (e.getKeyCode())
     {
@@ -1051,6 +1062,12 @@ public class UserInterface implements KeyListener, ChangeListener, ActionListene
         logger.info("Quit");
         System.exit(0);
         break;
+
+      case KeyEvent.VK_BACK_SLASH:
+        if (m_fsframe.getContentPane() != m_maincontent) break;
+        m_teamgrid.setShowSkills(!m_teamgrid.getShowSkills());
+        m_teamgrid.apply();
+        m_fsframe.repaint();
 
       default:
         logger.finest("Pressed: " + KeyEvent.getKeyText(e.getKeyCode()) + "(" + e.getKeyCode() + ")");
@@ -1188,6 +1205,10 @@ public class UserInterface implements KeyListener, ChangeListener, ActionListene
       else if (name.equals("Fairness"))
       {
         m_setup.setFairness(newValue);
+      }
+      else if (name.equals("Fair Teams"))
+      {
+        m_setup.setFairTeamCount(newValue);
       }
       else if (name.equals("Team Cap"))
       {
@@ -1446,20 +1467,6 @@ public class UserInterface implements KeyListener, ChangeListener, ActionListene
         m_maplist.updateMap(idx, updated);
       }
     }
-    else if (frame == m_setupeditor)
-    {
-      // int idx = parseSettingIndex(src.getName());
-      String name = parseSettingName(src.getName());
-      boolean newValue = e.getStateChange() == ItemEvent.SELECTED;
-      logger.info("    New State: " + (newValue ? "Checked" : "Not Checked"));
-      if (name.equals("Ignore Last"))
-      {
-        m_setup.setIgnoreLast(newValue);
-      }
-      else
-        logger.warning("Unknown setting: " + name);
-    }
-
   }
 
   public void setGame(Team[] teams, GameList.GameType game, MapList.Map map)
@@ -1518,6 +1525,7 @@ public class UserInterface implements KeyListener, ChangeListener, ActionListene
             int elapsed = (int) ((System.currentTimeMillis() - m_gamestarttime) / 1000);
             if (elapsed <= m_gamedelay)
             {
+              m_gametime.putClientProperty("max", (int) m_gamedelay);
               m_gametime.putClientProperty("val", elapsed);
               int minsleft = (int) ((m_gamedelay - elapsed) / 60);
               int secsleft = (int) ((m_gamedelay - elapsed) % 60);

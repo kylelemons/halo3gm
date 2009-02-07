@@ -12,7 +12,8 @@ import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 
 /**
- * This class encapsulates all of the logic necessary to generate the game, map, and players who will be playing on them for the Halo3 Game Master.
+ * This class encapsulates all of the logic necessary to generate the game, map, and players who will be playing on them
+ * for the Halo3 Game Master.
  * 
  * @author eko
  * 
@@ -20,9 +21,9 @@ import javax.swing.event.ListDataListener;
 public class GameGenerator implements ListDataListener
 {
   /**
-   * All classes who want to be notified when the game changes should implement this. The listeners can be added and removed with the
-   * {@link GameGenerator#addGameChangedListener(GameChangedListener)} and {@link GameGenerator#removeGameChangedListener(GameChangedListener)} utility methods
-   * of GameGenerator.
+   * All classes who want to be notified when the game changes should implement this. The listeners can be added and
+   * removed with the {@link GameGenerator#addGameChangedListener(GameChangedListener)} and
+   * {@link GameGenerator#removeGameChangedListener(GameChangedListener)} utility methods of GameGenerator.
    * 
    * @author eko
    */
@@ -97,7 +98,8 @@ public class GameGenerator implements ListDataListener
   }
 
   /**
-   * Create a game generator with the default setup. Be warned-- you can't access this setup from elsewhere. This is NOT the preferred way to create one.
+   * Create a game generator with the default setup. Be warned-- you can't access this setup from elsewhere. This is NOT
+   * the preferred way to create one.
    * 
    * @deprecated in favor of {@link GameGenerator#GameGenerator(GameSetup)}
    */
@@ -332,7 +334,8 @@ public class GameGenerator implements ListDataListener
   }
 
   /**
-   * This calculates the fitness of the proposed solution to the "fair game" problem. The lower this number is, the more fair the matchup.
+   * This calculates the fitness of the proposed solution to the "fair game" problem. The lower this number is, the more
+   * fair the matchup.
    * 
    * @param potential
    *          The team matchup to examine
@@ -349,7 +352,7 @@ public class GameGenerator implements ListDataListener
 
     for (int t = 1; t < potential.length; ++t)
     {
-      if (t == potential.length - 1 && m_setup.getIgnoreLastTeam()) continue;
+      if (t >= m_setup.getFairTeamCount()) continue;
       int skill = potential[t].totalSkill();
       if (skill > max) max = skill;
       if (skill < min) min = skill;
@@ -389,7 +392,8 @@ public class GameGenerator implements ListDataListener
   }
 
   /**
-   * Notify all listening objects that the game has changed. I really don't know if the exception catching here does what it should. Anyone? TODO
+   * Notify all listening objects that the game has changed. I really don't know if the exception catching here does
+   * what it should. Anyone? TODO
    */
   private void fireGameChanged()
   {
@@ -445,7 +449,8 @@ public class GameGenerator implements ListDataListener
   }
 
   /**
-   * Set the game generator to use the given game setup for generating games. This should normally be set in the constructor.
+   * Set the game generator to use the given game setup for generating games. This should normally be set in the
+   * constructor.
    * 
    * Causes a regeneration.
    * 
