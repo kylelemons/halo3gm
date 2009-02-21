@@ -1018,10 +1018,14 @@ public class UserInterface implements KeyListener, ChangeListener, ActionListene
 
       case KeyEvent.VK_F1:
         logger.info("Return to Game Screen");
-        m_fsframe.setFocusable(true);
-        m_fsframe.transferFocus(); // Needed to still receive keyboard events
-        m_fsframe.setContentPane(m_maincontent);
-        m_fsframe.setVisible(true);
+        if (m_fsframe.getContentPane() != m_maincontent)
+        {
+          saveDatabase(m_databasename.getText());
+          m_fsframe.setFocusable(true);
+          m_fsframe.transferFocus(); // Needed to still receive keyboard events
+          m_fsframe.setContentPane(m_maincontent);
+          m_fsframe.setVisible(true);
+        }
         break;
 
       case KeyEvent.VK_P:
