@@ -86,3 +86,7 @@ HaloGameMaster-v0.1.4:
   * RemoteUpdateServer.java: Added send (un)pause
   * RemoteUpdateClient.java: Added receive (un)pause
   * UserInterface.java: Changed so game delay updates take effect at regen, and propagate to clients
+
+2008-01-30  Kyle Lemons  <kyle.lemons@gatech.edu>
+  * HaloGameMaster.java: Version bump to v0.1.8
+  * HaloGameMaster.java: Added new maps
