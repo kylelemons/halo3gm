@@ -186,6 +186,11 @@ public class UserInterface implements KeyListener, ChangeListener, ActionListene
           MapList.Map next = (MapList.Map) input.readObject();
           m_maplist.add(next);
         }
+        // m_maplist.add(new MapList.Map("Assembly", "images/Assembly.jpg", 2, 8, 3));
+        // m_maplist.add(new MapList.Map("Orbital", "images/Orbital.jpg", 4, 12, 3));
+        // m_maplist.add(new MapList.Map("The Pit", "images/The Pit.jpg", 4, 10, 3));
+        // m_maplist.add(new MapList.Map("Sandbox", "images/Sandbox.jpg", 4, 12, 3));
+        // m_maplist.add(new MapList.Map("Standoff", "images/Standoff.jpg", 4, 12, 3));
 
         Integer gameTypeCount = (Integer) input.readObject();
         m_gamelist.clear();
@@ -271,6 +276,9 @@ public class UserInterface implements KeyListener, ChangeListener, ActionListene
         m_databasestatus.setText("Saving " + mapCount + " maps...");
         for (int i = 0; i < mapCount; ++i)
           output.writeObject(m_maplist.getMapList().get(i));
+
+        // Uncomment to add a new gametype... Major kludge, TODO add new
+        // m_gamelist.add(new GameList.GameType("Team Oddball", 3));
 
         Integer gameTypeCount = new Integer(m_gamelist.getSize());
         output.writeObject(gameTypeCount);

@@ -96,6 +96,7 @@ public class HaloGameMaster implements GameGenerator.GameChangedListener, UserIn
 
     m_games = new GameList();
     m_games.add(new GameList.GameType("Team Slayer", 5));
+    m_games.add(new GameList.GameType("Team Oddball", 3));
     m_games.add(new GameList.GameType("Team CTF", 2, false));
     m_games.add(new GameList.GameType("Team King", 2));
     m_games.add(new GameList.GameType("VIP", 1));
@@ -124,6 +125,12 @@ public class HaloGameMaster implements GameGenerator.GameChangedListener, UserIn
     m_maps.add(new MapList.Map("Sandtrap", "images/Sandtrap.jpg", 10, 16, 1));
     m_maps.add(new MapList.Map("Snowbound", "images/Snowbound.jpg", 12, 16, 1));
     m_maps.add(new MapList.Map("Valhalla", "images/Valhalla.jpg", 10, 16, 1));
+
+    m_maps.add(new MapList.Map("Assembly", "images/Assembly.jpg", 2, 8, 3));
+    m_maps.add(new MapList.Map("Orbital", "images/Orbital.jpg", 4, 12, 3));
+    m_maps.add(new MapList.Map("The Pit", "images/The Pit.jpg", 4, 10, 3));
+    m_maps.add(new MapList.Map("Sandbox", "images/Sandbox.jpg", 4, 12, 3));
+    m_maps.add(new MapList.Map("Standoff", "images/Standoff.jpg", 4, 12, 3));
     m_maps.sort();
     m_ui.setMapList(m_maps);
     m_gen.setMapList(m_maps);
