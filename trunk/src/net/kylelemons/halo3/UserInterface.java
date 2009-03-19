@@ -17,18 +17,6 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.ObjectInput;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutput;
-import java.io.ObjectOutputStream;
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.logging.Level;
@@ -79,7 +67,6 @@ public class UserInterface implements KeyListener, ChangeListener, ActionListene
   private JPanel                 m_maincontent;
   private TeamGrid               m_teamgrid;
   private JSplitPane             m_playereditor;
-  private PlayerList             m_playerlist;
   private JList                  m_playerlistview;
   private PlayerList.Player      m_active_player;
   private JTextField             m_active_playername;
@@ -89,10 +76,8 @@ public class UserInterface implements KeyListener, ChangeListener, ActionListene
   private JCheckBox              m_vetopower;
   private JPasswordField         m_vetopasscode;
   private JSplitPane             m_gameeditor;
-  private GameList               m_gamelist;
   private JList                  m_gamelistview;
   private JScrollPane            m_gamesettingspane;
-  private MapList                m_maplist;
   private JList                  m_maplistview;
   private JScrollPane            m_mapsettingspane;
   private ArrayList<KeyListener> m_fskeylisteners;
@@ -156,91 +141,107 @@ public class UserInterface implements KeyListener, ChangeListener, ActionListene
       return;
     }
 
-    try
-    {
-      InputStream file = new FileInputStream(filename);
-      InputStream buffer = new BufferedInputStream(file);
-      ObjectInput input = new ObjectInputStream(buffer);
-      try
-      {
-        Integer playerCount = (Integer) input.readObject();
-        m_playerlist.clear();
-
-        logger.info("Loading " + playerCount + " players...");
-        m_databasestatus.setText("Loading " + playerCount + " players...");
-        for (int i = 0; i < playerCount; ++i)
-        {
-          PlayerList.Player next = (PlayerList.Player) input.readObject();
-          // next.passcode_hash = "";
-          // next.veto_power = false;
-          m_playerlist.add(next);
-        }
-
-        Integer mapCount = (Integer) input.readObject();
-        m_maplist.clear();
-
-        logger.info("Loading " + mapCount + " maps...");
-        m_databasestatus.setText("Loading " + mapCount + " maps...");
-        for (int i = 0; i < mapCount; ++i)
-        {
-          MapList.Map next = (MapList.Map) input.readObject();
-          m_maplist.add(next);
-        }
-        // m_maplist.add(new MapList.Map("Assembly", "images/Assembly.jpg", 2, 8, 3));
-        // m_maplist.add(new MapList.Map("Orbital", "images/Orbital.jpg", 4, 12, 3));
-        // m_maplist.add(new MapList.Map("The Pit", "images/The Pit.jpg", 4, 10, 3));
-        // m_maplist.add(new MapList.Map("Sandbox", "images/Sandbox.jpg", 4, 12, 3));
-        // m_maplist.add(new MapList.Map("Standoff", "images/Standoff.jpg", 4, 12, 3));
-
-        Integer gameTypeCount = (Integer) input.readObject();
-        m_gamelist.clear();
-
-        logger.info("Loading " + gameTypeCount + " games...");
-        m_databasestatus.setText("Loading " + gameTypeCount + " games...");
-        for (int i = 0; i < gameTypeCount; ++i)
-        {
-          GameList.GameType next = (GameList.GameType) input.readObject();
-          m_gamelist.add(next);
-        }
-
-        logger.info("Loading Game Setup");
-        m_databasestatus.setText("Loading Game Setup...");
-        m_setup.setFairness((Integer) input.readObject());
-        m_setup.setGameDelay((Integer) input.readObject());
-        m_setup.setTeamCount((Integer) input.readObject());
-        m_setup.setFairTeamCount((Integer) input.readObject());
-        m_setup.setServerHost((String) input.readObject());
-        for (int i = 0; i < GameSetup.MAX_ALLOWED_TEAMS; ++i)
-        {
-          m_setup.setTeamCap(i, (Integer) input.readObject());
-          m_setup.setTeamName(i, (String) input.readObject());
-        }
-
-        logger.info("Database loaded successfully");
-        m_databasestatus.setText("Database loaded successfully");
-      }
-      catch (ClassCastException ex)
-      {
-        logger.log(Level.SEVERE, "Attempted to read the wrong class!", ex);
-      }
-      finally
-      {
-        input.close();
-      }
-    }
-    catch (FileNotFoundException ex)
-    {
-      m_databasestatus.setText("Could not load file: " + filename);
-    }
-    catch (ClassNotFoundException ex)
-    {
-      logger.log(Level.SEVERE, "Cannot perform input. Class not found.", ex);
-    }
-    catch (IOException ex)
-    {
-      logger.log(Level.SEVERE, "Cannot perform input.", ex);
-    }
+    String status = m_setup.loadDatabase(filename);
+    m_databasestatus.setText(status);
   }
+
+  //
+  // private void loadDatabase(String filename)
+  // {
+  // if (m_databasestatus == null) // not setup() yet
+  // m_databasestatus = new JLabel(); // just make a dummy
+  //
+  // if (filename.length() <= 0)
+  // {
+  // m_databasestatus.setText("Empty filenames are not acceptable.");
+  // return;
+  // }
+  //
+  // try
+  // {
+  // InputStream file = new FileInputStream(filename);
+  // InputStream buffer = new BufferedInputStream(file);
+  // ObjectInput input = new ObjectInputStream(buffer);
+  // try
+  // {
+  // Integer playerCount = (Integer) input.readObject();
+  // m_setup.getPlayerList().clear();
+  //
+  // logger.info("Loading " + playerCount + " players...");
+  // m_databasestatus.setText("Loading " + playerCount + " players...");
+  // for (int i = 0; i < playerCount; ++i)
+  // {
+  // PlayerList.Player next = (PlayerList.Player) input.readObject();
+  // // next.passcode_hash = "";
+  // // next.veto_power = false;
+  // m_setup.getPlayerList().add(next);
+  // }
+  //
+  // Integer mapCount = (Integer) input.readObject();
+  // m_setup.getMapList().clear();
+  //
+  // logger.info("Loading " + mapCount + " maps...");
+  // m_databasestatus.setText("Loading " + mapCount + " maps...");
+  // for (int i = 0; i < mapCount; ++i)
+  // {
+  // MapList.Map next = (MapList.Map) input.readObject();
+  // m_setup.getMapList().add(next);
+  // }
+  // // m_setup.getMapList().add(new MapList.Map("Assembly", "images/Assembly.jpg", 2, 8, 3));
+  // // m_setup.getMapList().add(new MapList.Map("Orbital", "images/Orbital.jpg", 4, 12, 3));
+  // // m_setup.getMapList().add(new MapList.Map("The Pit", "images/The Pit.jpg", 4, 10, 3));
+  // // m_setup.getMapList().add(new MapList.Map("Sandbox", "images/Sandbox.jpg", 4, 12, 3));
+  // // m_setup.getMapList().add(new MapList.Map("Standoff", "images/Standoff.jpg", 4, 12, 3));
+  //
+  // Integer gameTypeCount = (Integer) input.readObject();
+  // m_setup.getGameList().clear();
+  //
+  // logger.info("Loading " + gameTypeCount + " games...");
+  // m_databasestatus.setText("Loading " + gameTypeCount + " games...");
+  // for (int i = 0; i < gameTypeCount; ++i)
+  // {
+  // GameList.GameType next = (GameList.GameType) input.readObject();
+  // m_setup.getGameList().add(next);
+  // }
+  //
+  // logger.info("Loading Game Setup");
+  // m_databasestatus.setText("Loading Game Setup...");
+  // m_setup.setFairness((Integer) input.readObject());
+  // m_setup.setGameDelay((Integer) input.readObject());
+  // m_setup.setTeamCount((Integer) input.readObject());
+  // m_setup.setFairTeamCount((Integer) input.readObject());
+  // m_setup.setServerHost((String) input.readObject());
+  // for (int i = 0; i < GameSetup.MAX_ALLOWED_TEAMS; ++i)
+  // {
+  // m_setup.setTeamCap(i, (Integer) input.readObject());
+  // m_setup.setTeamName(i, (String) input.readObject());
+  // }
+  //
+  // logger.info("Database loaded successfully");
+  // m_databasestatus.setText("Database loaded successfully");
+  // }
+  // catch (ClassCastException ex)
+  // {
+  // logger.log(Level.SEVERE, "Attempted to read the wrong class!", ex);
+  // }
+  // finally
+  // {
+  // input.close();
+  // }
+  // }
+  // catch (FileNotFoundException ex)
+  // {
+  // m_databasestatus.setText("Could not load file: " + filename);
+  // }
+  // catch (ClassNotFoundException ex)
+  // {
+  // logger.log(Level.SEVERE, "Cannot perform input. Class not found.", ex);
+  // }
+  // catch (IOException ex)
+  // {
+  // logger.log(Level.SEVERE, "Cannot perform input.", ex);
+  // }
+  // }
 
   private void saveDatabase(String filename)
   {
@@ -253,107 +254,123 @@ public class UserInterface implements KeyListener, ChangeListener, ActionListene
       return;
     }
 
-    try
-    {
-      // use buffering
-      OutputStream file = new FileOutputStream(filename);
-      OutputStream buffer = new BufferedOutputStream(file);
-      ObjectOutput output = new ObjectOutputStream(buffer);
-      try
-      {
-        Integer playerCount = new Integer(m_playerlist.getSize());
-        output.writeObject(playerCount);
-
-        logger.info("Writing " + playerCount + " players...");
-        m_databasestatus.setText("Saving " + playerCount + " players...");
-        for (int i = 0; i < playerCount; ++i)
-          output.writeObject(m_playerlist.getPlayers().get(i));
-
-        Integer mapCount = new Integer(m_maplist.getSize());
-        output.writeObject(mapCount);
-
-        logger.info("Writing " + mapCount + " maps...");
-        m_databasestatus.setText("Saving " + mapCount + " maps...");
-        for (int i = 0; i < mapCount; ++i)
-          output.writeObject(m_maplist.getMapList().get(i));
-
-        // Uncomment to add a new gametype... Major kludge, TODO add new
-        // m_gamelist.add(new GameList.GameType("Team Oddball", 3));
-
-        Integer gameTypeCount = new Integer(m_gamelist.getSize());
-        output.writeObject(gameTypeCount);
-
-        logger.info("Writing " + gameTypeCount + " games...");
-        m_databasestatus.setText("Saving " + gameTypeCount + " games...");
-        for (int i = 0; i < gameTypeCount; ++i)
-          output.writeObject(m_gamelist.getGameList().get(i));
-
-        logger.info("Writing Game Setup");
-        m_databasestatus.setText("Saving Game Setup");
-        output.writeObject(m_setup.getFairness());
-        output.writeObject(m_setup.getGameDelay());
-        output.writeObject(m_setup.getTeamCount());
-        output.writeObject(m_setup.getFairTeamCount());
-        output.writeObject(m_setup.getServerHost());
-        for (int i = 0; i < GameSetup.MAX_ALLOWED_TEAMS; ++i)
-        {
-          output.writeObject(m_setup.getTeamCap(i));
-          output.writeObject(m_setup.getTeamName(i));
-        }
-
-        logger.info("Database written successfully");
-        m_databasestatus.setText("Database saved successfully");
-      }
-      finally
-      {
-        output.close();
-      }
-    }
-    catch (IOException ex)
-    {
-      logger.log(Level.SEVERE, "Cannot perform output.", ex);
-    }
+    String status = m_setup.saveDatabase(filename);
+    m_databasestatus.setText(status);
   }
+
+  //
+  // private void saveDatabase(String filename)
+  // {
+  // if (m_databasestatus == null) // not setup() yet
+  // m_databasestatus = new JLabel(); // just make a dummy
+  //
+  // if (filename.length() <= 0)
+  // {
+  // m_databasestatus.setText("Empty filenames are not acceptable.");
+  // return;
+  // }
+  //
+  // try
+  // {
+  // // use buffering
+  // OutputStream file = new FileOutputStream(filename);
+  // OutputStream buffer = new BufferedOutputStream(file);
+  // ObjectOutput output = new ObjectOutputStream(buffer);
+  // try
+  // {
+  // Integer playerCount = new Integer(m_setup.getPlayerList().getSize());
+  // output.writeObject(playerCount);
+  //
+  // logger.info("Writing " + playerCount + " players...");
+  // m_databasestatus.setText("Saving " + playerCount + " players...");
+  // for (int i = 0; i < playerCount; ++i)
+  // output.writeObject(m_setup.getPlayerList().getPlayers().get(i));
+  //
+  // Integer mapCount = new Integer(m_setup.getMapList().getSize());
+  // output.writeObject(mapCount);
+  //
+  // logger.info("Writing " + mapCount + " maps...");
+  // m_databasestatus.setText("Saving " + mapCount + " maps...");
+  // for (int i = 0; i < mapCount; ++i)
+  // output.writeObject(m_setup.getMapList().getMapList().get(i));
+  //
+  // // Uncomment to add a new gametype... Major kludge, TODO add new
+  // // m_setup.getGameList().add(new GameList.GameType("Team Oddball", 3));
+  //
+  // Integer gameTypeCount = new Integer(m_setup.getGameList().getSize());
+  // output.writeObject(gameTypeCount);
+  //
+  // logger.info("Writing " + gameTypeCount + " games...");
+  // m_databasestatus.setText("Saving " + gameTypeCount + " games...");
+  // for (int i = 0; i < gameTypeCount; ++i)
+  // output.writeObject(m_setup.getGameList().getGameList().get(i));
+  //
+  // logger.info("Writing Game Setup");
+  // m_databasestatus.setText("Saving Game Setup");
+  // output.writeObject(m_setup.getFairness());
+  // output.writeObject(m_setup.getGameDelay());
+  // output.writeObject(m_setup.getTeamCount());
+  // output.writeObject(m_setup.getFairTeamCount());
+  // output.writeObject(m_setup.getServerHost());
+  // for (int i = 0; i < GameSetup.MAX_ALLOWED_TEAMS; ++i)
+  // {
+  // output.writeObject(m_setup.getTeamCap(i));
+  // output.writeObject(m_setup.getTeamName(i));
+  // }
+  //
+  // logger.info("Database written successfully");
+  // m_databasestatus.setText("Database saved successfully");
+  // }
+  // finally
+  // {
+  // output.close();
+  // }
+  // }
+  // catch (IOException ex)
+  // {
+  // logger.log(Level.SEVERE, "Cannot perform output.", ex);
+  // }
+  // }
 
   /** Set the players */
   public void setPlayerList(PlayerList players)
   {
-    m_playerlist = players;
+    m_setup.setPlayerList(players);
     updatePlayers();
   }
 
   public void setGameList(GameList games)
   {
-    m_gamelist = games;
+    m_setup.setGameList(games);
     updateGames();
   }
 
   public void setMapList(MapList maps)
   {
-    m_maplist = maps;
+    m_setup.setMapList(maps);
     updateMaps();
   }
 
   private void updatePlayers()
   {
     if (m_playerlistview == null) return;
-    m_playerlistview.setModel(m_playerlist);
+    m_playerlistview.setModel(m_setup.getPlayerList());
     m_playerlistview.invalidate();
   }
 
   private void updateGames()
   {
     if (m_gamelistview == null) return;
-    m_gamelistview.setModel(m_gamelist);
+    m_gamelistview.setModel(m_setup.getGameList());
     m_gamelistview.invalidate();
 
     JPanel gameSettings = new JPanel();
     gameSettings.setLayout(new BoxLayout(gameSettings, BoxLayout.PAGE_AXIS));
 
-    for (int i = 0; i < m_gamelist.getSize(); ++i)
+    for (int i = 0; i < m_setup.getGameList().getSize(); ++i)
     {
       JPanel game = new JPanel();
-      GameList.GameType type = (GameList.GameType) m_gamelist.getElementAt(i);
+      GameList.GameType type = (GameList.GameType) m_setup.getGameList().getElementAt(i);
       game.setBorder(new TitledBorder(type.name + " Settings"));
       game.setFocusable(true);
       game.setLayout(new FlowLayout());
@@ -386,18 +403,18 @@ public class UserInterface implements KeyListener, ChangeListener, ActionListene
   private void updateMaps()
   {
     if (m_maplistview == null) return;
-    m_maplistview.setModel(m_maplist);
+    m_maplistview.setModel(m_setup.getMapList());
     m_maplistview.invalidate();
 
     JPanel mapSettings = new JPanel();
     mapSettings.setLayout(new BoxLayout(mapSettings, BoxLayout.PAGE_AXIS));
 
-    for (int i = 0; i < m_maplist.getSize(); ++i)
+    for (int i = 0; i < m_setup.getMapList().getSize(); ++i)
     {
       JPanel panel = new JPanel();
       JPanel sub1 = new JPanel();
       JPanel sub2 = new JPanel();
-      MapList.Map map = (MapList.Map) m_maplist.getElementAt(i);
+      MapList.Map map = (MapList.Map) m_setup.getMapList().getElementAt(i);
       panel.setBorder(new TitledBorder(map.name + " Settings"));
       panel.setLayout(new BoxLayout(panel, BoxLayout.PAGE_AXIS));
       sub1.setLayout(new FlowLayout());
@@ -575,8 +592,8 @@ public class UserInterface implements KeyListener, ChangeListener, ActionListene
 
     // Set up the playerList
     playerList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-    if (m_playerlist == null) m_playerlist = new PlayerList();
-    playerList.setModel(m_playerlist);
+    if (m_setup.getPlayerList() == null) m_setup.setPlayerList(new PlayerList());
+    playerList.setModel(m_setup.getPlayerList());
     playerList.setName("Player List");
     playerList.addListSelectionListener(this);
     playerList.addKeyListener(this);
@@ -727,16 +744,16 @@ public class UserInterface implements KeyListener, ChangeListener, ActionListene
 
     // Set up the gameList
     gameList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-    if (m_gamelist == null) m_gamelist = new GameList();
-    gameList.setModel(m_gamelist);
+    if (m_setup.getGameList() == null) m_setup.setGameList(new GameList());
+    gameList.setModel(m_setup.getGameList());
     gameList.setName("Game List");
     gameList.addListSelectionListener(this);
     gameList.addKeyListener(this);
 
     // Set up the mapList
     mapList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-    if (m_maplist == null) m_maplist = new MapList();
-    mapList.setModel(m_maplist);
+    if (m_setup.getMapList() == null) m_setup.setMapList(new MapList());
+    mapList.setModel(m_setup.getMapList());
     mapList.setName("Map List");
     mapList.addListSelectionListener(this);
     mapList.addKeyListener(this);
@@ -1061,10 +1078,10 @@ public class UserInterface implements KeyListener, ChangeListener, ActionListene
         if (m_fsframe.getFocusOwner().getName() == null) break;
         if (m_fsframe.getFocusOwner().getName().equals("Player List") && m_active_player != null)
         {
-          int idx = m_playerlist.findPlayer(m_active_player);
-          PlayerList.Player p = m_playerlist.getPlayers(false).get(idx);
+          int idx = m_setup.getPlayerList().findPlayer(m_active_player);
+          PlayerList.Player p = m_setup.getPlayerList().getPlayers(false).get(idx);
           p.playing ^= true;
-          m_playerlist.updatePlayer(idx, p);
+          m_setup.getPlayerList().updatePlayer(idx, p);
           this.m_active_enabled.setSelected(p.playing);
         }
         break;
@@ -1100,10 +1117,10 @@ public class UserInterface implements KeyListener, ChangeListener, ActionListene
     if (!skipAuth && (current == m_maincontent || current == m_authenticate))
     {
       boolean activeMajors = false;
-      for (int i = 0; !goToFrame && i < m_playerlist.getSize(); ++i)
+      for (int i = 0; !goToFrame && i < m_setup.getPlayerList().getSize(); ++i)
       {
-        if (m_playerlist.getPlayers().get(i).veto_power && m_playerlist.getPlayers().get(i).passcode_hash.length() > 0)
-          activeMajors = true;
+        if (m_setup.getPlayerList().getPlayers().get(i).veto_power
+            && m_setup.getPlayerList().getPlayers().get(i).passcode_hash.length() > 0) activeMajors = true;
       }
       if (!activeMajors) goToFrame = true;
     }
@@ -1152,7 +1169,7 @@ public class UserInterface implements KeyListener, ChangeListener, ActionListene
     if (src.getName() == null) return;
     if (frame == m_playereditor && m_active_player != null)
     {
-      int idx = m_playerlist.findPlayer(m_active_player);
+      int idx = m_setup.getPlayerList().findPlayer(m_active_player);
       logger.info("Component: " + src.getName());
       if (src.getName().equals("Player Skill") || src.getName().equals("Player Priority"))
       {
@@ -1160,7 +1177,7 @@ public class UserInterface implements KeyListener, ChangeListener, ActionListene
         logger.info("New Value: " + newValue);
         PlayerList.Player active = m_active_player;
         if (src.getName().equals("Player Skill")) active.skill = newValue;
-        m_playerlist.updatePlayer(idx, active);
+        m_setup.getPlayerList().updatePlayer(idx, active);
       }
     }
     else if (frame == m_gameeditor)
@@ -1175,27 +1192,27 @@ public class UserInterface implements KeyListener, ChangeListener, ActionListene
       // Game Weight
       if (name.equals("Game Weight"))
       {
-        GameList.GameType updated = m_gamelist.getGameList().get(idx);
+        GameList.GameType updated = m_setup.getGameList().getGameList().get(idx);
         updated.weight = newValue;
-        m_gamelist.updateGame(idx, updated);
+        m_setup.getGameList().updateGame(idx, updated);
       }
       else if (name.equals("Min Players"))
       {
-        MapList.Map updated = m_maplist.getMapList().get(idx);
+        MapList.Map updated = m_setup.getMapList().getMapList().get(idx);
         updated.min_players = newValue;
-        m_maplist.updateMap(idx, updated);
+        m_setup.getMapList().updateMap(idx, updated);
       }
       else if (name.equals("Max Players"))
       {
-        MapList.Map updated = m_maplist.getMapList().get(idx);
+        MapList.Map updated = m_setup.getMapList().getMapList().get(idx);
         updated.max_players = newValue;
-        m_maplist.updateMap(idx, updated);
+        m_setup.getMapList().updateMap(idx, updated);
       }
       else if (name.equals("Map Weight"))
       {
-        MapList.Map updated = m_maplist.getMapList().get(idx);
+        MapList.Map updated = m_setup.getMapList().getMapList().get(idx);
         updated.weight = newValue;
-        m_maplist.updateMap(idx, updated);
+        m_setup.getMapList().updateMap(idx, updated);
       }
       else
         logger.severe("Unrecognized Setting: " + name);
@@ -1265,7 +1282,7 @@ public class UserInterface implements KeyListener, ChangeListener, ActionListene
       // be
       // at
       // end
-      m_playerlist.add(def);
+      m_setup.getPlayerList().add(def);
       m_playerlistview.invalidate();
       m_active_player = def;
       showPlayer(def);
@@ -1280,7 +1297,7 @@ public class UserInterface implements KeyListener, ChangeListener, ActionListene
       def.skill = m_active_player.skill;
       m_active_player = null;
       m_playerlistview.setSelectedIndices(new int[0]);
-      m_playerlist.add(def);
+      m_setup.getPlayerList().add(def);
       m_playerlistview.invalidate();
       m_active_player = def;
       showPlayer(def);
@@ -1295,7 +1312,7 @@ public class UserInterface implements KeyListener, ChangeListener, ActionListene
         logger.info("DELETE");
         showPlayer(new PlayerList.Player());
         m_playerlistview.setSelectedIndices(new int[0]);
-        m_playerlist.delete(active);
+        m_setup.getPlayerList().delete(active);
       }
       else
         m_delete_confirm.setSelected(true);
@@ -1324,7 +1341,7 @@ public class UserInterface implements KeyListener, ChangeListener, ActionListene
 
       if (m_fsframe.getContentPane() == m_playereditor && m_active_player != null)
       {
-        int idx = m_playerlist.findPlayer(m_active_player);
+        int idx = m_setup.getPlayerList().findPlayer(m_active_player);
         logger.info("Document change: " + src);
         if (src == null) return;
         String newValue = e.getDocument().getText(0, e.getDocument().getLength());
@@ -1344,7 +1361,7 @@ public class UserInterface implements KeyListener, ChangeListener, ActionListene
         else if (src.equals("Gamer Tag"))
           active.gamertag = newValue;
         else if (src.equals("Passcode")) active.setPasscode(newValue);
-        m_playerlist.updatePlayer(idx, active);
+        m_setup.getPlayerList().updatePlayer(idx, active);
       }
       else if (m_fsframe.getContentPane() == m_setupeditor)
       {
@@ -1374,9 +1391,9 @@ public class UserInterface implements KeyListener, ChangeListener, ActionListene
           return;
         }
         // TODO
-        for (int i = 0; i < m_playerlist.getSize(); ++i)
+        for (int i = 0; i < m_setup.getPlayerList().getSize(); ++i)
         {
-          PlayerList.Player p = m_playerlist.getPlayers().get(i);
+          PlayerList.Player p = m_setup.getPlayerList().getPlayers().get(i);
           if (p.veto_power && p.passcode_hash.length() > 0) if (p.checkPasscode(newValue))
           {
             authFrameSwitch(m_pendingscreen, true);
@@ -1416,7 +1433,7 @@ public class UserInterface implements KeyListener, ChangeListener, ActionListene
         logger.info("     Selected: (none)");
         return;
       }
-      PlayerList.Player active = this.m_playerlist.getPlayers().get(index);
+      PlayerList.Player active = this.m_setup.getPlayerList().getPlayers().get(index);
       showPlayer(active);
       m_active_player = active;
       logger.info("     Selected: " + m_active_player);
@@ -1451,13 +1468,13 @@ public class UserInterface implements KeyListener, ChangeListener, ActionListene
       logger.info("State changed: " + src.getName());
       if (m_active_player != null && src.getName().equals("Playing") || src.getName().equals("Major Player"))
       {
-        int idx = m_playerlist.findPlayer(m_active_player);
+        int idx = m_setup.getPlayerList().findPlayer(m_active_player);
         boolean newValue = e.getStateChange() == ItemEvent.SELECTED;
         logger.info("    New State: " + (newValue ? "Checked" : "Not Checked"));
         PlayerList.Player active = m_active_player;
         if (src.getName().equals("Playing")) active.playing = newValue;
         if (src.getName().equals("Major Player")) active.veto_power = newValue;
-        m_playerlist.updatePlayer(idx, active);
+        m_setup.getPlayerList().updatePlayer(idx, active);
       }
     }
     else if (frame == m_gameeditor)
@@ -1468,15 +1485,15 @@ public class UserInterface implements KeyListener, ChangeListener, ActionListene
       logger.info("    New State: " + (newValue ? "Checked" : "Not Checked"));
       if (name.equals("Game Enabled"))
       {
-        GameList.GameType updated = m_gamelist.getGameList().get(idx);
+        GameList.GameType updated = m_setup.getGameList().getGameList().get(idx);
         updated.enabled = newValue;
-        m_gamelist.updateGame(idx, updated);
+        m_setup.getGameList().updateGame(idx, updated);
       }
       else if (name.equals("Map Enabled"))
       {
-        MapList.Map updated = m_maplist.getMapList().get(idx);
+        MapList.Map updated = m_setup.getMapList().getMapList().get(idx);
         updated.enabled = newValue;
-        m_maplist.updateMap(idx, updated);
+        m_setup.getMapList().updateMap(idx, updated);
       }
     }
   }

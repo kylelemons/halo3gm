@@ -1,14 +1,14 @@
 HaloGameMaster-v0.1.2:
 
-2008-01-23  Kyle Lemons  <kyle.lemons@gatech.edu>
+2009-01-23  Kyle Lemons  <kyle.lemons@gatech.edu>
   * CHANGELOG: Created the change log.
 
 HaloGameMaster-v0.1.3:
 
-2008-01-23  Kyle Lemons  <kyle.lemons@gatech.edu>
+2009-01-23  Kyle Lemons  <kyle.lemons@gatech.edu>
   * HaloGameMaster: Bumped revision up to v0.1.3 after packaging up v0.1.2
 
-2008-01-23  Kyle Lemons  <kyle.lemons@gatech.edu>
+2009-01-23  Kyle Lemons  <kyle.lemons@gatech.edu>
   * UserInterface.java (createContents): Added new/delete buttons
   * CHANGELOG: Changed formatting of the CHANGELOG
   
@@ -18,7 +18,7 @@ HaloGameMaster-v0.1.3:
   * UserInterface.java (createContents): Changed starting slider values for players to zero
   * UserInterface.java (actionPerformed): Added player deletion
 
-2008-01-24  Kyle Lemons  <kyle.lemons@gatech.edu>
+2009-01-24  Kyle Lemons  <kyle.lemons@gatech.edu>
   * HaloGameMaster.java: Added java.util.logging
   * GameGenerator.java: Added java.util.logging
   * UserInterface.java: Added java.util.logging
@@ -46,7 +46,7 @@ HaloGameMaster-v0.1.3:
 
 HaloGameMaster-v0.1.4:
 
-2008-01-23  Kyle Lemons  <kyle.lemons@gatech.edu>
+2009-01-23  Kyle Lemons  <kyle.lemons@gatech.edu>
   * HaloGameMaster: Bumped revision up to v0.1.4 after tagging and packaging up v0.1.3
   
   * GameGenerator.java: Changed the player selection algorithm
@@ -61,16 +61,16 @@ HaloGameMaster-v0.1.4:
   * UserInterface.java: Added bypass key to minimize window (undocumented) and enable loading (also undoc'd)
   * UserInterface.java: Added cross-platform look and feel by default (e.g. on Mac)
 
-2008-01-28  Kyle Lemons  <kyle.lemons@gatech.edu>
+2009-01-28  Kyle Lemons  <kyle.lemons@gatech.edu>
   * SimpleWebInterface.java: Added this class, with a simple iPhone-aimed web view of the game
     - Thanks to Nate and Austin for this idea.  It's far simpler than the mirroring stuff, and probably more useful.
   * HaloGameMaster.java: Added the web interface code to start automatically
 
-2008-01-29  Kyle Lemons  <kyle.lemons@gatech.edu>
+2009-01-29  Kyle Lemons  <kyle.lemons@gatech.edu>
   * SimpleWebInterface.java: This didn't like having multiple instances.  Now it just logs it if the port is in use.
   * RemoteUpdateServer.java: Started working on the mirror server.
 
-2008-01-30  Kyle Lemons  <kyle.lemons@gatech.edu>
+2009-01-30  Kyle Lemons  <kyle.lemons@gatech.edu>
   * RemoteUpdateServer.java: Turns out, you need to flush the object output stream.
   * RemoteUpdateClient.java: Created this class and verified it.
   * HaloGameMaster.java: Added client, server, etc code
@@ -87,6 +87,10 @@ HaloGameMaster-v0.1.4:
   * RemoteUpdateClient.java: Added receive (un)pause
   * UserInterface.java: Changed so game delay updates take effect at regen, and propagate to clients
 
-2008-01-30  Kyle Lemons  <kyle.lemons@gatech.edu>
+2009-01-30  Kyle Lemons  <kyle.lemons@gatech.edu>
   * HaloGameMaster.java: Version bump to v0.1.8
   * HaloGameMaster.java: Added new maps
+  
+2009-03-18  Kyle Lemons  <kyle.lemons@gatech.edu>
+  * GameGenerator.java: Changed some text stuff to make more sense (errors)
+  
