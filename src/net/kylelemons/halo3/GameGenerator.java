@@ -316,7 +316,7 @@ public class GameGenerator implements ListDataListener
     // Sanity check
     if (m_gamelist.getSize() < 1 || gameWeights[gameWeights.length - 1] <= 0)
     {
-      logger.info("Cowardly refusing to create a game with fewer than one valid game");
+      logger.info("Cowardly refusing to create a matchup with fewer than one valid game");
       return;
     }
 
