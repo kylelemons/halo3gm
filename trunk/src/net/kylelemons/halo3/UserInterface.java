@@ -53,6 +53,8 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.text.BadLocationException;
 
+import net.kylelemons.halo3.PlayerList.Player;
+
 public class UserInterface implements KeyListener, ChangeListener, ActionListener, DocumentListener,
     ListSelectionListener, ItemListener, PropertyChangeListener
 {
@@ -101,6 +103,10 @@ public class UserInterface implements KeyListener, ChangeListener, ActionListene
 
   private int                    m_gamedelay;
 
+  private JProgressBar[]         m_teamprogresses;
+
+  private JSlider[]              m_teamsizesliders;
+
   // TODO: Pending screen login
   // TODO: Setup parameter for "ignore last team"
 
@@ -121,6 +127,8 @@ public class UserInterface implements KeyListener, ChangeListener, ActionListene
     m_databasestatus = null;
     m_setup = new GameSetup();
     m_gamedelay = m_setup.getGameDelay();
+    m_teamprogresses = new JProgressBar[GameSetup.MAX_ALLOWED_TEAMS];
+    m_teamsizesliders = new JSlider[GameSetup.MAX_ALLOWED_TEAMS];
   }
 
   public void setup()
@@ -780,21 +788,21 @@ public class UserInterface implements KeyListener, ChangeListener, ActionListene
     setupPanel.setLayout(new BoxLayout(setupPanel, BoxLayout.PAGE_AXIS));
     setupLayoutHelper.add(setupPanel, BorderLayout.PAGE_START);
 
-    JPanel teamCountPanel = new JPanel();
-    teamCountPanel.setBorder(new TitledBorder("Team Generation"));
-    teamCountPanel.setLayout(new FlowLayout());
-    teamCountPanel.add(new JLabel("How many teams should I generate?"));
-    JSlider teamCount = new JSlider(JSlider.HORIZONTAL, 2, GameSetup.MAX_ALLOWED_TEAMS, m_setup.getTeamCount());
-    teamCount.setMajorTickSpacing(1);
-    teamCount.setMinorTickSpacing(1);
-    teamCount.setPaintTicks(true);
-    teamCount.setPaintLabels(true);
-    teamCount.setSnapToTicks(true);
-    teamCount.setName("Team Count");
-    teamCount.addKeyListener(this);
-    teamCount.addChangeListener(this);
-    teamCountPanel.add(teamCount);
-    setupPanel.add(teamCountPanel);
+    // JPanel teamCountPanel = new JPanel();
+    // teamCountPanel.setBorder(new TitledBorder("Team Generation"));
+    // teamCountPanel.setLayout(new FlowLayout());
+    // teamCountPanel.add(new JLabel("How many teams should I generate?"));
+    // JSlider teamCount = new JSlider(JSlider.HORIZONTAL, 2, GameSetup.MAX_ALLOWED_TEAMS, m_setup.getTeamCount());
+    // teamCount.setMajorTickSpacing(1);
+    // teamCount.setMinorTickSpacing(1);
+    // teamCount.setPaintTicks(true);
+    // teamCount.setPaintLabels(true);
+    // teamCount.setSnapToTicks(true);
+    // teamCount.setName("Team Count");
+    // teamCount.addKeyListener(this);
+    // teamCount.addChangeListener(this);
+    // teamCountPanel.add(teamCount);
+    // setupPanel.add(teamCountPanel);
 
     JPanel fairnessPanel = new JPanel();
     {
@@ -869,75 +877,117 @@ public class UserInterface implements KeyListener, ChangeListener, ActionListene
     delayPanel.add(delaySlider);
     setupPanel.add(delayPanel);
 
-    JPanel teamNamePanel = new JPanel();
-    teamNamePanel.setBorder(new TitledBorder("Team Names"));
-    teamNamePanel.setLayout(new BoxLayout(teamNamePanel, BoxLayout.PAGE_AXIS));
-    JPanel subNamePanel1 = new JPanel();
-    subNamePanel1.add(new JLabel("1-4"));
-    for (int i = 0; i < GameSetup.MAX_ALLOWED_TEAMS / 2; ++i)
-    {
-      JTextField fld = new JTextField(12);
-      fld.setText(m_setup.getTeamName(i));
-      fld.setName("Team Name:" + i);
-      fld.getDocument().putProperty("Name", "Team Name:" + i);
-      fld.getDocument().addDocumentListener(this);
-      fld.addKeyListener(this);
-      subNamePanel1.add(fld);
-    }
-    JPanel subNamePanel2 = new JPanel();
-    subNamePanel2.add(new JLabel("5-8"));
-    for (int i = GameSetup.MAX_ALLOWED_TEAMS / 2; i < GameSetup.MAX_ALLOWED_TEAMS; ++i)
-    {
-      JTextField fld = new JTextField(12);
-      fld.setText(m_setup.getTeamName(i));
-      fld.setName("Team Name:" + i);
-      fld.getDocument().putProperty("Name", "Team Name:" + i);
-      fld.getDocument().addDocumentListener(this);
-      fld.addKeyListener(this);
-      subNamePanel2.add(fld);
-    }
-    teamNamePanel.add(subNamePanel1);
-    teamNamePanel.add(subNamePanel2);
-    setupPanel.add(teamNamePanel);
+    // JPanel teamNamePanel = new JPanel();
+    // teamNamePanel.setBorder(new TitledBorder("Team Names"));
+    // teamNamePanel.setLayout(new BoxLayout(teamNamePanel, BoxLayout.PAGE_AXIS));
+    // JPanel subNamePanel1 = new JPanel();
+    // subNamePanel1.add(new JLabel("1-4"));
+    // for (int i = 0; i < GameSetup.MAX_ALLOWED_TEAMS / 2; ++i)
+    // {
+    // JTextField fld = new JTextField(12);
+    // fld.setText(m_setup.getTeamName(i));
+    // fld.setName("Team Name:" + i);
+    // fld.getDocument().putProperty("Name", "Team Name:" + i);
+    // fld.getDocument().addDocumentListener(this);
+    // fld.addKeyListener(this);
+    // subNamePanel1.add(fld);
+    // }
+    // JPanel subNamePanel2 = new JPanel();
+    // subNamePanel2.add(new JLabel("5-8"));
+    // for (int i = GameSetup.MAX_ALLOWED_TEAMS / 2; i < GameSetup.MAX_ALLOWED_TEAMS; ++i)
+    // {
+    // JTextField fld = new JTextField(12);
+    // fld.setText(m_setup.getTeamName(i));
+    // fld.setName("Team Name:" + i);
+    // fld.getDocument().putProperty("Name", "Team Name:" + i);
+    // fld.getDocument().addDocumentListener(this);
+    // fld.addKeyListener(this);
+    // subNamePanel2.add(fld);
+    // }
+    // teamNamePanel.add(subNamePanel1);
+    // teamNamePanel.add(subNamePanel2);
+    // setupPanel.add(teamNamePanel);
 
-    JPanel teamCapPanel = new JPanel();
-    teamCapPanel.setBorder(new TitledBorder("Team Capacities (zero disables)"));
-    teamCapPanel.setLayout(new BoxLayout(teamCapPanel, BoxLayout.PAGE_AXIS));
-    JPanel subCapPanel1 = new JPanel();
-    subCapPanel1.add(new JLabel("1-4"));
-    for (int i = 0; i < GameSetup.MAX_ALLOWED_TEAMS / 2; ++i)
+    // JPanel teamCapPanel = new JPanel();
+    // teamCapPanel.setBorder(new TitledBorder("Team Sizeacities (zero disables)"));
+    // teamCapPanel.setLayout(new BoxLayout(teamCapPanel, BoxLayout.PAGE_AXIS));
+    // JPanel subCapPanel1 = new JPanel();
+    // subCapPanel1.add(new JLabel("1-4"));
+    // for (int i = 0; i < GameSetup.MAX_ALLOWED_TEAMS / 2; ++i)
+    // {
+    // JSlider cap = new JSlider(JSlider.HORIZONTAL, 0, 8, m_setup.getTeamSize(i));
+    // cap.setMajorTickSpacing(2);
+    // cap.setMinorTickSpacing(1);
+    // cap.setPaintTicks(true);
+    // cap.setPaintLabels(true);
+    // cap.setSnapToTicks(true);
+    // cap.setName("Team Size:" + i);
+    // cap.addKeyListener(this);
+    // cap.addChangeListener(this);
+    // cap.setPreferredSize(new Dimension(120, cap.getPreferredSize().height));
+    // subCapPanel1.add(cap);
+    // }
+    // JPanel subCapPanel2 = new JPanel();
+    // subCapPanel2.add(new JLabel("5-8"));
+    // for (int i = GameSetup.MAX_ALLOWED_TEAMS / 2; i < GameSetup.MAX_ALLOWED_TEAMS; ++i)
+    // {
+    // JSlider cap = new JSlider(JSlider.HORIZONTAL, 0, 8, m_setup.getTeamSize(i));
+    // cap.setMajorTickSpacing(2);
+    // cap.setMinorTickSpacing(1);
+    // cap.setPaintTicks(true);
+    // cap.setPaintLabels(true);
+    // cap.setSnapToTicks(true);
+    // cap.setName("Team Size:" + i);
+    // cap.addKeyListener(this);
+    // cap.addChangeListener(this);
+    // cap.setPreferredSize(new Dimension(120, cap.getPreferredSize().height));
+    // subCapPanel2.add(cap);
+    // }
+    // teamCapPanel.add(subCapPanel1);
+    // teamCapPanel.add(subCapPanel2);
+    // setupPanel.add(teamCapPanel);
+
+    for (int i = 0; i < GameSetup.MAX_ALLOWED_TEAMS; ++i)
     {
-      JSlider cap = new JSlider(JSlider.HORIZONTAL, 0, 8, m_setup.getTeamCap(i));
-      cap.setMajorTickSpacing(2);
-      cap.setMinorTickSpacing(1);
-      cap.setPaintTicks(true);
-      cap.setPaintLabels(true);
-      cap.setSnapToTicks(true);
-      cap.setName("Team Cap:" + i);
-      cap.addKeyListener(this);
-      cap.addChangeListener(this);
-      cap.setPreferredSize(new Dimension(120, cap.getPreferredSize().height));
-      subCapPanel1.add(cap);
+      JPanel teamSetupPanel = new JPanel();
+      teamSetupPanel.setBorder(BorderFactory.createTitledBorder("Team " + i));
+
+      JTextField fld = new JTextField(12);
+      fld.setText(m_setup.getTeamName(i));
+      fld.setName("Team Name:" + i);
+      fld.getDocument().putProperty("Name", "Team Name:" + i);
+      fld.getDocument().addDocumentListener(this);
+      fld.addKeyListener(this);
+      teamSetupPanel.add(fld);
+
+      teamSetupPanel.add(Box.createHorizontalStrut(35));
+
+      m_teamsizesliders[i] = new JSlider(JSlider.HORIZONTAL, 0, 8, m_setup.getTeamSize(i));
+      m_teamsizesliders[i].setMajorTickSpacing(2);
+      m_teamsizesliders[i].setMinorTickSpacing(1);
+      m_teamsizesliders[i].setPaintTicks(true);
+      m_teamsizesliders[i].setPaintLabels(true);
+      m_teamsizesliders[i].setSnapToTicks(true);
+      m_teamsizesliders[i].setName("Team Size:" + i);
+      // m_teamsizesliders[i].addKeyListener(this); // TODO: Why does this break screen switching?
+      m_teamsizesliders[i].addChangeListener(this);
+      m_teamsizesliders[i].setPreferredSize(new Dimension(120, m_teamsizesliders[i].getPreferredSize().height));
+      teamSetupPanel.add(m_teamsizesliders[i]);
+
+      teamSetupPanel.add(Box.createHorizontalStrut(35));
+
+      // TODO
+      m_teamprogresses[i] = new JProgressBar();
+      m_teamprogresses[i].setMaximum(100);
+      m_teamprogresses[i].setValue(0);
+      m_teamprogresses[i].setStringPainted(true);
+      m_teamprogresses[i].setString("0%");
+      // m_teamprogresses[i].setFont(new Font("Serif", Font.BOLD, screenHeight / 30));
+      // m_teamprogresses[i].addPropertyChangeListener(this);
+      teamSetupPanel.add(m_teamprogresses[i]);
+
+      setupPanel.add(teamSetupPanel);
     }
-    JPanel subCapPanel2 = new JPanel();
-    subCapPanel2.add(new JLabel("5-8"));
-    for (int i = GameSetup.MAX_ALLOWED_TEAMS / 2; i < GameSetup.MAX_ALLOWED_TEAMS; ++i)
-    {
-      JSlider cap = new JSlider(JSlider.HORIZONTAL, 0, 8, m_setup.getTeamCap(i));
-      cap.setMajorTickSpacing(2);
-      cap.setMinorTickSpacing(1);
-      cap.setPaintTicks(true);
-      cap.setPaintLabels(true);
-      cap.setSnapToTicks(true);
-      cap.setName("Team Cap:" + i);
-      cap.addKeyListener(this);
-      cap.addChangeListener(this);
-      cap.setPreferredSize(new Dimension(120, cap.getPreferredSize().height));
-      subCapPanel2.add(cap);
-    }
-    teamCapPanel.add(subCapPanel1);
-    teamCapPanel.add(subCapPanel2);
-    setupPanel.add(teamCapPanel);
 
     JPanel remotePanel = new JPanel();
     remotePanel.setBorder(BorderFactory.createTitledBorder("Remote Client/Server"));
@@ -1004,104 +1054,126 @@ public class UserInterface implements KeyListener, ChangeListener, ActionListene
     m_authenticate = authWrapper;
   }
 
-  /** Handle the key-pressed event from the text field. */
-  public void keyPressed(KeyEvent e)
+  private void calcTeamFill(int updated)
   {
-    /* Process these keys always */
-    /*
-     * { System.out.println("Help:"); System.out.println("  F1  Esc  - Display Game Screen or Help (this)");
-     * System.out.println("  F2  P    - Launch Player Editor");
-     * System.out.println("  F3  G    - Launch Game/Map Editor"); System.out.println("      Q    - Quit");
-     * System.exit(0); }
-     */
-    switch (e.getKeyCode())
+    int unassigned = 0;
+    int total = 0;
+    int bigteam = 0;
+
+    // Fetch the player list and count active players
+    ArrayList<Player> players = m_setup.getPlayerList().getPlayers(false);
+
+    for (int p = 0; p < players.size(); ++p)
     {
-      /*
-       * Undocumented feature: Press F12 to minimize from fullscreen, M to restore fullscreen
-       */
-      case KeyEvent.VK_F12:
-        if (m_fsframe.getContentPane() == m_maincontent)
-        {
-          GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
-          gd.setFullScreenWindow(null);
-          // if (!m_fsframe.isDisplayable()) m_fsframe.setUndecorated(false);
-          m_fsframe.setState(JFrame.ICONIFIED);
-        }
-
-        /*
-         * Undocumented feature: Press F12 enable the load database button (backdoor into editing a database)
-         */
-        if (m_fsframe.getContentPane() == m_setupeditor)
-        {
-          logger.severe("Backdoor database load enabled!");
-          m_loaddbbutton.setEnabled(true);
-        }
-        break;
-      case KeyEvent.VK_M:
-        if (m_fsframe.getContentPane() == m_maincontent) makeFullScreen();
-        break;
-
-      case KeyEvent.VK_F1:
-        logger.info("Return to Game Screen");
-        if (m_fsframe.getContentPane() != m_maincontent)
-        {
-          saveDatabase(m_databasename.getText());
-          m_fsframe.setFocusable(true);
-          m_fsframe.transferFocus(); // Needed to still receive keyboard events
-          m_fsframe.setContentPane(m_maincontent);
-          m_fsframe.setVisible(true);
-        }
-        break;
-
-      case KeyEvent.VK_P:
-        if (m_fsframe.getContentPane() != m_maincontent) break;
-      case KeyEvent.VK_F2:
-        logger.info("Launching Player Editor");
-        authFrameSwitch(m_playereditor, false);
-        break;
-
-      case KeyEvent.VK_G:
-        if (m_fsframe.getContentPane() != m_maincontent) break;
-      case KeyEvent.VK_F3:
-        logger.info("Launching Game Editor");
-        authFrameSwitch(m_gameeditor, false);
-        break;
-
-      case KeyEvent.VK_S:
-        if (m_fsframe.getContentPane() != m_maincontent) break;
-      case KeyEvent.VK_F4:
-        logger.info("Launching Setup Editor");
-        authFrameSwitch(m_setupeditor, false);
-        break;
-
-      case KeyEvent.VK_SPACE:
-        if (m_fsframe.getFocusOwner().getName() == null) break;
-        if (m_fsframe.getFocusOwner().getName().equals("Player List") && m_active_player != null)
-        {
-          int idx = m_setup.getPlayerList().findPlayer(m_active_player);
-          PlayerList.Player p = m_setup.getPlayerList().getPlayers(false).get(idx);
-          p.playing ^= true;
-          m_setup.getPlayerList().updatePlayer(idx, p);
-          this.m_active_enabled.setSelected(p.playing);
-        }
-        break;
-
-      case KeyEvent.VK_Q:
-        if (m_fsframe.getContentPane() != m_maincontent) break;
-        logger.info("Quit");
-        System.exit(0);
-        break;
-
-      case KeyEvent.VK_BACK_SLASH:
-        if (m_fsframe.getContentPane() != m_maincontent) break;
-        m_teamgrid.setShowSkills(!m_teamgrid.getShowSkills());
-        m_teamgrid.apply();
-        m_fsframe.repaint();
-
-      default:
-        logger.finest("Pressed: " + KeyEvent.getKeyText(e.getKeyCode()) + "(" + e.getKeyCode() + ")");
+      if (players.get(p).playing)
+      {
+        total++;
+      }
     }
-    fireKeyListener(e.getKeyCode(), e.getID());
+    unassigned = total;
+
+    // Pick out certain teams and get the biggest
+    for (int t = 0; t < GameSetup.MAX_ALLOWED_TEAMS; ++t)
+    {
+      if (m_setup.getTeamSize(t) > bigteam) bigteam = m_setup.getTeamSize(t);
+    }
+
+    // Track assignments and update progress bar
+    for (int t = 0; t < GameSetup.MAX_ALLOWED_TEAMS; ++t)
+    {
+      int teamSize = m_setup.getTeamSize(t);
+      this.m_teamprogresses[t].setString(teamSize + "/" + total);
+      this.m_teamprogresses[t].setValue(100 * teamSize / bigteam);
+      unassigned -= teamSize;
+    }
+
+    while (unassigned != 0)
+    {
+      int bestChoice = -1;
+      int secondChoice = -1;
+      int thirdChoice = -1;
+      int worstChoice = -1;
+      int delta = unassigned / Math.abs(unassigned);
+
+      // Figure out which team we should add to or remove from
+      for (int t = 0; t < GameSetup.MAX_ALLOWED_TEAMS; ++t)
+      {
+
+        int teamSize = m_setup.getTeamSize(t);
+
+        if (teamSize != 0 && teamSize + delta <= GameSetup.MAX_TEAM_SIZE)
+        {
+
+          // First choice:
+          if (teamSize + delta >= 1 && t > updated) bestChoice = t;
+
+          // Second choice
+          if (teamSize + delta >= 1 && t < updated && secondChoice == -1) secondChoice = t;
+
+          // Third Choice
+          if (teamSize + delta >= 0) thirdChoice = t;
+        }
+        if (teamSize == 0 && delta > 0 && worstChoice == -1) worstChoice = t;
+
+        logger.info("Choices at " + t + " (" + updated + "): " + bestChoice + "/" + secondChoice + "/" + thirdChoice
+            + "/" + worstChoice);
+
+        // if (teamSize + delta >= 0 && teamSize + delta < GameSetup.MAX_TEAM_SIZE)
+        // {
+        // if (teamSize + delta >= 1 && teamSize != 0)
+        // {
+        // // First choice comes after the one updated
+        // if (t > updated) bestChoice = t;
+        //
+        // // Second choice would be before the one updated (but isn't the same)
+        // if (t != updated) secondChoice = t;
+        // }
+        // // Last choice can revive or kill a team
+        // if (m_setup.getTeamSize(thirdChoice) != 0) thirdChoice = t;
+        // }
+      }
+
+      int choice = bestChoice;
+      if (choice == -1)
+      {
+        choice = secondChoice;
+        logger.info("Falling Back to second choice...");
+      }
+      if (choice == -1)
+      {
+        choice = thirdChoice;
+        logger.info("Falling Back to third choice!");
+      }
+      if (choice == -1)
+      {
+        choice = worstChoice;
+        logger.info("Falling Back to final choice!");
+      }
+      if (choice == -1)
+      {
+        logger.info("Failed to choose a proper team!");
+        return;
+      }
+      logger.info("Changing players on team " + choice + " by " + delta);
+
+      // Change the team size
+      int teamSize = m_setup.getTeamSize(choice) + delta;
+      this.m_teamprogresses[choice].setString(teamSize + "/" + total);
+      this.m_teamprogresses[choice].setValue(100 * teamSize / bigteam);
+      this.m_teamsizesliders[choice].setValue(teamSize);
+      m_setup.setTeamSize(choice, teamSize);
+
+      // update the delta
+      unassigned -= delta;
+    }
+
+    // TODO
+  }
+
+  private void calcTeamFill()
+  {
+    logger.warning("Calling all teamfill");
+    calcTeamFill(0); // update all
   }
 
   /**
@@ -1145,18 +1217,125 @@ public class UserInterface implements KeyListener, ChangeListener, ActionListene
     }
   }
 
+  /** Handle the key-pressed event from the text field. */
+  public void keyPressed(KeyEvent e)
+  {
+    String name = KeyEvent.getKeyText(e.getKeyCode());
+    System.out.println("Pressed: " + name);
+    /* Process these keys always */
+    /*
+     * { System.out.println("Help:"); System.out.println("  F1  Esc  - Display Game Screen or Help (this)");
+     * System.out.println("  F2  P    - Launch Player Editor");
+     * System.out.println("  F3  G    - Launch Game/Map Editor"); System.out.println("      Q    - Quit");
+     * System.exit(0); }
+     */
+    switch (e.getKeyCode())
+    {
+      /*
+       * Undocumented feature: Press F12 to minimize from fullscreen, M to restore fullscreen
+       */
+      case KeyEvent.VK_F12:
+        if (m_fsframe.getContentPane() == m_maincontent)
+        {
+          GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
+          gd.setFullScreenWindow(null);
+          // if (!m_fsframe.isDisplayable()) m_fsframe.setUndecorated(false);
+          m_fsframe.setState(JFrame.ICONIFIED);
+        }
+
+        /*
+         * Undocumented feature: Press F12 enable the load database button (backdoor into editing a database)
+         */
+        if (m_fsframe.getContentPane() == m_setupeditor)
+        {
+          logger.severe("Backdoor database load enabled!");
+          m_loaddbbutton.setEnabled(true);
+        }
+        break;
+      case KeyEvent.VK_M:
+        if (m_fsframe.getContentPane() == m_maincontent) makeFullScreen();
+        break;
+
+      case KeyEvent.VK_F1:
+        logger.info("Return to Game Screen");
+        if (m_fsframe.getContentPane() != m_maincontent)
+        {
+          saveDatabase(m_databasename.getText());
+          m_fsframe.setFocusable(true);
+          m_fsframe.transferFocus(); // Needed to still receive keyboard events
+          m_fsframe.setContentPane(m_maincontent);
+          m_fsframe.setVisible(true);
+          // System.out.println(m_fsframe.getFocusOwner());
+        }
+        break;
+
+      case KeyEvent.VK_P:
+        if (m_fsframe.getContentPane() != m_maincontent) break;
+      case KeyEvent.VK_F2:
+        logger.info("Launching Player Editor");
+        authFrameSwitch(m_playereditor, false);
+        break;
+
+      case KeyEvent.VK_G:
+        if (m_fsframe.getContentPane() != m_maincontent) break;
+      case KeyEvent.VK_F3:
+        logger.info("Launching Game Editor");
+        authFrameSwitch(m_gameeditor, false);
+        break;
+
+      case KeyEvent.VK_S:
+        if (m_fsframe.getContentPane() != m_maincontent) break;
+      case KeyEvent.VK_F4:
+        logger.info("Launching Setup Editor");
+        calcTeamFill();
+        authFrameSwitch(m_setupeditor, false);
+        break;
+
+      case KeyEvent.VK_SPACE:
+        if (m_fsframe.getFocusOwner().getName() == null) break;
+        if (m_fsframe.getFocusOwner().getName().equals("Player List") && m_active_player != null)
+        {
+          int idx = m_setup.getPlayerList().findPlayer(m_active_player);
+          PlayerList.Player p = m_setup.getPlayerList().getPlayers(false).get(idx);
+          p.playing ^= true;
+          m_setup.getPlayerList().updatePlayer(idx, p);
+          this.m_active_enabled.setSelected(p.playing);
+        }
+        break;
+
+      case KeyEvent.VK_Q:
+        if (m_fsframe.getContentPane() != m_maincontent) break;
+        logger.info("Quit");
+        System.exit(0);
+        break;
+
+      case KeyEvent.VK_BACK_SLASH:
+        if (m_fsframe.getContentPane() != m_maincontent) break;
+        if (m_teamgrid.getShowSkills() == 0)
+          m_teamgrid.setShowSkills(m_setup.getFairTeamCount());
+        else
+          m_teamgrid.setShowSkills(0);
+        m_teamgrid.apply();
+        m_fsframe.repaint();
+
+      default:
+        logger.finest("Pressed: " + KeyEvent.getKeyText(e.getKeyCode()) + "(" + e.getKeyCode() + ")");
+    }
+    fireKeyListener(e.getKeyCode(), e.getID());
+  }
+
   /** Handle the key typed event from the text field. */
   public void keyTyped(KeyEvent e)
   {
-    // String name = KeyEvent.getKeyText(e.getKeyCode());
-    // System.out.println("Typed: " + name);
+    String name = KeyEvent.getKeyText(e.getKeyCode());
+    System.out.println("Typed: " + name);
   }
 
   /** Handle the key-released event from the text field. */
   public void keyReleased(KeyEvent e)
   {
-    // String name = KeyEvent.getKeyText(e.getKeyCode());
-    // System.out.println("Released: " + name + "(" + e.getKeyCode() + ")");
+    String name = KeyEvent.getKeyText(e.getKeyCode());
+    System.out.println("Released: " + name + "(" + e.getKeyCode() + ")");
     fireKeyListener(e.getKeyCode(), e.getID());
   }
 
@@ -1227,11 +1406,7 @@ public class UserInterface implements KeyListener, ChangeListener, ActionListene
       int newValue = ((JSlider) src).getValue();
       logger.info("New Value: " + newValue);
       // Game Weight
-      if (name.equals("Team Count"))
-      {
-        m_setup.setTeamCount(newValue);
-      }
-      else if (name.equals("Fairness"))
+      if (name.equals("Fairness"))
       {
         m_setup.setFairness(newValue);
       }
@@ -1239,9 +1414,10 @@ public class UserInterface implements KeyListener, ChangeListener, ActionListene
       {
         m_setup.setFairTeamCount(newValue);
       }
-      else if (name.equals("Team Cap"))
+      else if (name.equals("Team Size"))
       {
-        m_setup.setTeamCap(index, newValue);
+        m_setup.setTeamSize(index, newValue);
+        calcTeamFill(index);
       }
       else if (name.equals("Game Delay"))
       {
