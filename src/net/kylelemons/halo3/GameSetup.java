@@ -27,7 +27,7 @@ import java.util.logging.Logger;
 public class GameSetup implements Serializable
 {
   private static final long serialVersionUID         = 8786786673968199764L;
-  private static final int  CURRENT_DATABASE_VERSION = 1;
+  private static final int  CURRENT_DATABASE_VERSION = 2;
 
   public static interface SetupChangeListener
   {
@@ -35,12 +35,12 @@ public class GameSetup implements Serializable
   }
 
   public static final int                          MAX_ALLOWED_TEAMS = 8;
+  public static final int                          MAX_TEAM_SIZE     = 8;
   private static Logger                            logger            = Logger.getLogger("net.kylelemons.halo3");
 
-  private int                                      m_teamcount;
   private int                                      m_fairness;
   private String[]                                 m_teamnames;
-  private int[]                                    m_teamcaps;
+  private int[]                                    m_teamsizes;
   private String                                   m_serverhost;
   private transient ArrayList<SetupChangeListener> m_listeners;
   private int                                      m_gamedelay;
@@ -53,7 +53,6 @@ public class GameSetup implements Serializable
   public GameSetup()
   {
     m_dbversion = CURRENT_DATABASE_VERSION;
-    m_teamcount = 4;
     m_fairness = 1;
     m_gamedelay = 60 * 7;
     m_serverhost = "127.0.0.1";
@@ -61,9 +60,9 @@ public class GameSetup implements Serializable
     m_teamnames = new String[MAX_ALLOWED_TEAMS];
     for (int i = 0; i < MAX_ALLOWED_TEAMS; ++i)
       m_teamnames[i] = TeamGrid.TeamNames[i];
-    m_teamcaps = new int[MAX_ALLOWED_TEAMS];
+    m_teamsizes = new int[MAX_ALLOWED_TEAMS];
     for (int i = 0; i < MAX_ALLOWED_TEAMS; ++i)
-      m_teamcaps[i] = 0;
+      m_teamsizes[i] = 0;
   }
 
   public MapList getMapList()
@@ -110,24 +109,6 @@ public class GameSetup implements Serializable
   }
 
   /**
-   * @param teamcount
-   *          the teamcount to set
-   */
-  public void setTeamCount(int teamcount)
-  {
-    m_teamcount = teamcount;
-    fireSetupChange();
-  }
-
-  /**
-   * @return the teamcount
-   */
-  public int getTeamCount()
-  {
-    return m_teamcount;
-  }
-
-  /**
    * @param fairness
    *          the fairness to set
    */
@@ -161,17 +142,17 @@ public class GameSetup implements Serializable
       m_listeners.get(i).setupChanged();
   }
 
-  public void setTeamCap(int team, int maxPlayers)
+  public void setTeamSize(int team, int maxPlayers)
   {
     if (team >= MAX_ALLOWED_TEAMS || team < 0) return;
-    m_teamcaps[team] = maxPlayers;
+    m_teamsizes[team] = maxPlayers;
     this.fireSetupChange();
   }
 
-  public int getTeamCap(int team)
+  public int getTeamSize(int team)
   {
     if (team >= MAX_ALLOWED_TEAMS || team < 0) return -1;
-    return m_teamcaps[team];
+    return m_teamsizes[team];
   }
 
   /**
@@ -279,12 +260,12 @@ public class GameSetup implements Serializable
         logger.info("Loading Game Setup");
         m_fairness = ((Integer) input.readObject());
         m_gamedelay = ((Integer) input.readObject());
-        m_teamcount = ((Integer) input.readObject());
+        if (dbVersion <= 1) input.readObject(); // Discard team count
         m_fair_teams = ((Integer) input.readObject());
         m_serverhost = ((String) input.readObject());
         for (int i = 0; i < GameSetup.MAX_ALLOWED_TEAMS; ++i)
         {
-          setTeamCap(i, (Integer) input.readObject());
+          setTeamSize(i, (Integer) input.readObject());
           setTeamName(i, (String) input.readObject());
         }
 
@@ -361,12 +342,11 @@ public class GameSetup implements Serializable
         logger.info("Writing Game Setup");
         output.writeObject(m_fairness);
         output.writeObject(m_gamedelay);
-        output.writeObject(m_teamcount);
         output.writeObject(m_fair_teams);
         output.writeObject(m_serverhost);
         for (int i = 0; i < GameSetup.MAX_ALLOWED_TEAMS; ++i)
         {
-          output.writeObject(getTeamCap(i));
+          output.writeObject(getTeamSize(i));
           output.writeObject(getTeamName(i));
         }
 
@@ -383,6 +363,14 @@ public class GameSetup implements Serializable
       return "Error in writing";
     }
     return "Successfully wrote to database";
+  }
+
+  public int countActiveTeams()
+  {
+    int active = 0;
+    for (int i = 0; i < MAX_ALLOWED_TEAMS; ++i)
+      if (m_teamsizes[i] > 0) active++;
+    return active;
   }
 
 }

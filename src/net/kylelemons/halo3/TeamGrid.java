@@ -49,7 +49,7 @@ public class TeamGrid extends JPanel
       new Color(0xFF, 0x8C, 0x00), // Orange : Moccasin, darkOrange
                                              };
 
-  public boolean            m_showscore;
+  public int                m_showscore;
 
   /*
    * Colors: "Red", "Orange", "Gold", "Green", "Blue", "Purple", "Brown", "Pink"
@@ -68,7 +68,7 @@ public class TeamGrid extends JPanel
   {
     m_teams = new ArrayList<Team>();
     m_layout = new GridBagLayout();
-    m_showscore = false;
+    m_showscore = 0;
   }
 
   public void addTeam(Team t)
@@ -130,6 +130,8 @@ public class TeamGrid extends JPanel
     this.removeAll();
     for (int t = 0; t < m_teams.size(); ++t)
     {
+      if (m_teams.get(t).size() == 0) continue;
+
       constraints.gridx = 0;
       constraints.gridy = t;
       constraints.weightx = 0.7;
@@ -150,11 +152,13 @@ public class TeamGrid extends JPanel
       /* This has been removed so as not to cause drama ^_^ */constraints.weightx = 0.2;
       constraints.gridx = max + 1;
 
-      if (m_showscore)
-      {
-        if (m_teams.get(t).totalSkill() >= 10)
-          this.add(createColorLabel("" + m_teams.get(t).totalSkill(), Color.BLACK, TeamColors[t], true), constraints);
-      }
+      // if (m_showscore)
+      // {
+      // if (m_teams.get(t).totalSkill() >= 10)
+      // this.add(createColorLabel("" + m_teams.get(t).totalSkill(), Color.BLACK, TeamColors[t], true), constraints);
+      // }
+      if (t < m_showscore)
+        this.add(createColorLabel("" + m_teams.get(t).totalSkill(), Color.BLACK, TeamColors[t], true), constraints);
       //
     } // add all of the teams
     this.revalidate();
@@ -168,12 +172,12 @@ public class TeamGrid extends JPanel
     this.validate();
   }
 
-  public boolean getShowSkills()
+  public int getShowSkills()
   {
     return m_showscore;
   }
 
-  public void setShowSkills(boolean b)
+  public void setShowSkills(int b)
   {
     m_showscore = b;
   }

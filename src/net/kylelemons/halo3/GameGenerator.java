@@ -207,7 +207,6 @@ public class GameGenerator implements ListDataListener
     /* * * * * * * * * * * * * * * * */
     int totalPlayers = players.size();
     int realPlayers = (totalPlayers <= 16) ? totalPlayers : 16;
-    int maxPerTeam = (int) Math.ceil((double) totalPlayers / m_setup.getTeamCount());
     int fairness = m_setup.getFairness();
     if (totalPlayers < 2)
     {
@@ -215,7 +214,7 @@ public class GameGenerator implements ListDataListener
       return;
     }
 
-    logger.fine("With " + players.size() + " players, we'll have at most " + maxPerTeam + " players per team");
+    logger.fine("Generating With " + players.size() + " players and " + m_setup.countActiveTeams() + " teams");
 
     // Loop fairness times to find the fairest team allocation
     int fairest_score = -1;
@@ -227,14 +226,13 @@ public class GameGenerator implements ListDataListener
       Collections.shuffle(players, m_rand);
 
       // Allocate a clean list of teams
-      Team[] potential = new Team[m_setup.getTeamCount()];
+      Team[] potential = new Team[m_setup.MAX_ALLOWED_TEAMS];
 
       // Assign people to teams
       int cur = 0;
       for (int t = 0; t < potential.length; ++t)
       {
-        int cap = m_setup.getTeamCap(t);
-        if (cap == 0 || cap > maxPerTeam) cap = maxPerTeam;
+        int cap = m_setup.getTeamSize(t);
         potential[t] = new Team("Team " + (t + 1));
         for (int j = 0; j < cap && cur < players.size(); ++j)
           potential[t].add(players.get(cur++));
@@ -251,7 +249,7 @@ public class GameGenerator implements ListDataListener
       {
         m_teams = potential;
         fairest_score = fairness_score;
-        logger.info("New fairest team: " + fairest_score);
+        logger.finest("New fairest team: " + fairest_score);
       }
     }
 
@@ -353,6 +351,7 @@ public class GameGenerator implements ListDataListener
     for (int t = 1; t < potential.length; ++t)
     {
       if (t >= m_setup.getFairTeamCount()) continue;
+      if (m_setup.getTeamSize(t) == 0) continue;
       int skill = potential[t].totalSkill();
       if (skill > max) max = skill;
       if (skill < min) min = skill;

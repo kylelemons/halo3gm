@@ -12,7 +12,9 @@ import java.util.ArrayList;
  */
 public class Team implements Serializable
 {
-  private static final long            serialVersionUID = 2865566082926115926L;
+  private static final long            serialVersionUID      = 2865566082926115926L;
+
+  private static final double          TEAM_SKILL_PER_PLAYER = 1.0;
 
   private ArrayList<PlayerList.Player> m_members;
   private String                       m_teamname;
@@ -49,8 +51,7 @@ public class Team implements Serializable
     for (int i = 0; i < m_members.size(); ++i)
       strings.add(m_members.get(i).toString());
     /*
-     * for (int i = 0; i < m_members.size(); ++i)
-     * strings.add(m_members.get(i).getLongName());
+     * for (int i = 0; i < m_members.size(); ++i) strings.add(m_members.get(i).getLongName());
      */
     return strings;
   }
@@ -65,6 +66,7 @@ public class Team implements Serializable
     int skill = 0;
     for (int i = 0; i < m_members.size(); ++i)
       skill += m_members.get(i).skill;
+    skill += Math.ceil(m_members.size() * TEAM_SKILL_PER_PLAYER);
     return skill;
   }
 }
