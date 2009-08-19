@@ -107,6 +107,10 @@ public class UserInterface implements KeyListener, ChangeListener, ActionListene
 
   private JSlider[]              m_teamsizesliders;
 
+  private JTextField             m_newgamename;
+
+  private JTextField             m_newmapname;
+
   // TODO: Pending screen login
   // TODO: Setup parameter for "ignore last team"
 
@@ -405,6 +409,25 @@ public class UserInterface implements KeyListener, ChangeListener, ActionListene
       gameSettings.add(game);
     }
 
+    JPanel newGamePanel = new JPanel();
+    newGamePanel.setBorder(BorderFactory.createTitledBorder("New Game Type"));
+    newGamePanel.setLayout(new BoxLayout(newGamePanel, BoxLayout.LINE_AXIS));
+
+    m_newgamename = new JTextField();
+    m_newgamename.setName("New Game Name");
+    m_newgamename.getDocument().putProperty("Name", "New Game Name");
+    m_newgamename.getDocument().addDocumentListener(this);
+    m_newgamename.addKeyListener(this);
+    newGamePanel.add(m_newgamename);
+
+    JButton newGameButton = new JButton("Add");
+    newGameButton.setName("Add Game Type");
+    newGameButton.addKeyListener(this);
+    newGameButton.addActionListener(this);
+    newGamePanel.add(newGameButton);
+
+    gameSettings.add(newGamePanel); // TODO
+
     m_gamesettingspane.getViewport().setView(gameSettings);
   }
 
@@ -475,6 +498,25 @@ public class UserInterface implements KeyListener, ChangeListener, ActionListene
       panel.validate();
       mapSettings.add(panel);
     }
+
+    JPanel newMapPanel = new JPanel();
+    newMapPanel.setBorder(BorderFactory.createTitledBorder("New Map"));
+    newMapPanel.setLayout(new BoxLayout(newMapPanel, BoxLayout.LINE_AXIS));
+
+    m_newmapname = new JTextField();
+    m_newmapname.setName("New Map Name");
+    m_newmapname.getDocument().putProperty("Name", "New Map Name");
+    m_newmapname.getDocument().addDocumentListener(this);
+    m_newmapname.addKeyListener(this);
+    newMapPanel.add(m_newmapname);
+
+    JButton newMapButton = new JButton("Add");
+    newMapButton.setName("Add Map");
+    newMapButton.addKeyListener(this);
+    newMapButton.addActionListener(this);
+    newMapPanel.add(newMapButton);
+
+    mapSettings.add(newMapPanel); // TODO
 
     m_mapsettingspane.getViewport().setView(mapSettings);
   }
@@ -952,16 +994,6 @@ public class UserInterface implements KeyListener, ChangeListener, ActionListene
       JPanel teamSetupPanel = new JPanel();
       teamSetupPanel.setBorder(BorderFactory.createTitledBorder("Team " + i));
 
-      JTextField fld = new JTextField(12);
-      fld.setText(m_setup.getTeamName(i));
-      fld.setName("Team Name:" + i);
-      fld.getDocument().putProperty("Name", "Team Name:" + i);
-      fld.getDocument().addDocumentListener(this);
-      fld.addKeyListener(this);
-      teamSetupPanel.add(fld);
-
-      teamSetupPanel.add(Box.createHorizontalStrut(35));
-
       m_teamsizesliders[i] = new JSlider(JSlider.HORIZONTAL, 0, 8, m_setup.getTeamSize(i));
       m_teamsizesliders[i].setMajorTickSpacing(2);
       m_teamsizesliders[i].setMinorTickSpacing(1);
@@ -969,7 +1001,7 @@ public class UserInterface implements KeyListener, ChangeListener, ActionListene
       m_teamsizesliders[i].setPaintLabels(true);
       m_teamsizesliders[i].setSnapToTicks(true);
       m_teamsizesliders[i].setName("Team Size:" + i);
-      // m_teamsizesliders[i].addKeyListener(this); // TODO: Why does this break screen switching?
+      m_teamsizesliders[i].addKeyListener(this); // TODO: Why does this break screen switching?
       m_teamsizesliders[i].addChangeListener(this);
       m_teamsizesliders[i].setPreferredSize(new Dimension(120, m_teamsizesliders[i].getPreferredSize().height));
       teamSetupPanel.add(m_teamsizesliders[i]);
@@ -985,6 +1017,16 @@ public class UserInterface implements KeyListener, ChangeListener, ActionListene
       // m_teamprogresses[i].setFont(new Font("Serif", Font.BOLD, screenHeight / 30));
       // m_teamprogresses[i].addPropertyChangeListener(this);
       teamSetupPanel.add(m_teamprogresses[i]);
+
+      teamSetupPanel.add(Box.createHorizontalStrut(35));
+
+      JTextField fld = new JTextField(12);
+      fld.setText(m_setup.getTeamName(i));
+      fld.setName("Team Name:" + i);
+      fld.getDocument().putProperty("Name", "Team Name:" + i);
+      fld.getDocument().addDocumentListener(this);
+      fld.addKeyListener(this);
+      teamSetupPanel.add(fld);
 
       setupPanel.add(teamSetupPanel);
     }
@@ -1492,6 +1534,18 @@ public class UserInterface implements KeyListener, ChangeListener, ActionListene
       }
       else
         m_delete_confirm.setSelected(true);
+    }
+    else if (name.equals("Add Game Type"))
+    {
+      String newGameName = m_newgamename.getText();
+      m_setup.getGameList().add(new GameList.GameType(newGameName, 0));
+      updateGames();
+    }
+    else if (name.equals("Add Map"))
+    {
+      String newMapName = m_newmapname.getText();
+      m_setup.getMapList().add(new MapList.Map(newMapName, "", 2, 16, 0));
+      updateMaps();
     }
     else if (name.equals("Save Database"))
     {
