@@ -27,7 +27,7 @@ public class HaloGameMaster implements GameGenerator.GameChangedListener, UserIn
 
   // TODO Logging
   public static final String APPLICATION = "HaloGameMaster";
-  public static final String VERSION     = "v0.1.9";
+  public static final String VERSION     = "v0.2.0";
   private long               m_regen_start_time;
   private SimpleWebInterface m_webserver;
   private Thread             m_webthread;
